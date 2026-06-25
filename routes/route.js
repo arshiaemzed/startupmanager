@@ -5,8 +5,9 @@ const controller = require("../controllers/controller");
 const createStartupMiddleware = require("../middlewares/createStartupMiddleware");
 const joinStartupMiddleware = require("../middlewares/joinStartupMiddleware");
 const createNewTaskMiddleware = require("../middlewares/createNewTaskMiddleware");
+const signupMiddleware = require("../middlewares/signupMiddleware");
 
-router.post("/auth/register", asyncHandler(controller.signup));
+router.post("/auth/signup", signupMiddleware, asyncHandler(controller.signup));
 
 router.post("/auth/login", asyncHandler(controller.login));
 
