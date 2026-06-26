@@ -1,0 +1,116 @@
+const {
+  requireStartup,
+  requireJoining,
+  requirePermission,
+  requireTask,
+} = require("../guards/serviceGuard");
+
+const tasktaskRepository = require("../repositories/taskRepository");
+
+async function createNewTask(
+  title,
+  description,
+  startupId,
+  assigned_to,
+  userId,
+) {
+  await requireStartup(startupId);
+
+  await requireJoining(startupId, userId);
+
+  await requirePermission(
+    startupId,
+    userId,
+    ["owner"],
+    "Only owner can create new tasks",
+  );
+
+  const newTask = await taskRepository.createNewTask(
+    title,
+    description,
+    startupId,
+    assigned_to ?? null,
+  );
+
+  return newTask;
+}
+
+async function getAllTasks(startupId, userId) {
+  await requireStartup(startupId);
+
+  await requireJoining(startupId, userId);
+
+  const tasks = await taskRepository.getAllTasks(startupId);
+
+  return tasks;
+}
+
+async function getSingleTask(startupId, taskId, userId) {
+  await requireStartup(startupId);
+
+  await requireJoining(startupId, userId);
+
+  const task = await taskRepository.getSpecificTask(startupId, taskId);
+
+  return task;
+}
+
+async function deleteSpecificTask(startupId, taskId, userId) {
+  await requireStartup(startupId);
+
+  await requireTask(startupId, taskId);
+
+  await requireJoining(startupId, userId);
+
+  await requirePermission(
+    startupId,
+    userId,
+    ["owner", "admin"],
+    "Only owner and admin can delete tasks",
+  );
+
+  const deletedTask = await tasktaskRepository.deleteSpecificTask(
+    startupId,
+    taskId,
+  );
+
+  return deletedTask;
+}
+
+async function updateTaskAssignedUser(
+  startupId,
+  taskId,
+  userId,
+  assignedUserId,
+) {
+  await requireStartup(startupId);
+
+  await requireTask(startupId, taskId);
+
+  await requireJoining(startupId, userId);
+
+  await requireJoining(startupId, assignedUserId);
+
+  await requirePermission(
+    startupId,
+    userId,
+    ["owner", "admin"],
+    "Only owner and admin can assign tasks",
+  );
+
+  const updatedTask = await tasktaskRepository.updateTaskAssignedUser(
+    startupId,
+    taskId,
+    assignedUserId,
+  );
+
+  return updatedTask;
+}
+
+module.exports = {
+  createNewTask,
+  getAllTasks,
+  getSingleTask,
+  deleteSpecificTask,
+  updateTaskAssignedUser,
+};
