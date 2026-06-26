@@ -4,6 +4,8 @@ const {
   genereateRefreshToken,
 } = require("../token_generate");
 
+const AppError = require("../customErrors");
+
 async function registerUser(email, password) {
   return repository.createNewUser(email, password);
 }
@@ -26,11 +28,11 @@ async function login(email, password) {
   const user = await repository.findUser(email);
 
   if (!user) {
-    throw new Error("user not found in db");
+    throw new AppError(401, "user not found in db");
   }
 
   if (user.password != password) {
-    throw new Error("wrong password");
+    throw new AppError(401, "wrong password");
   }
 
   const accessToken = generateAccessToken(user);
@@ -60,7 +62,7 @@ async function logout(userId, refreshToken) {
   );
 
   if (!verifyRefreshToken) {
-    throw new Error("Refresh token is not valid");
+    throw new AppError(401, "Refresh token is not valid");
   }
 
   const deletedRefreshToken = await repository.deleteRefreshToken(
@@ -69,7 +71,7 @@ async function logout(userId, refreshToken) {
   );
 
   if (!deletedRefreshToken) {
-    throw new Error("Failed to delete refresh token");
+    throw new AppError(401, "Failed to delete refresh token");
   }
 
   return { message: "Successfully logged out and killed the refresh token" };
@@ -86,11 +88,11 @@ async function joinStartup(startupId, userId) {
   const doesStartupExists = await repository.doesStartupExists(startupId);
 
   if (!doesStartupExists) {
-    throw new Error("startup does not exist");
+    throw new AppError(401, "startup does not exist");
   }
 
   if (alreadyJoined) {
-    throw new Error("you already joined this startup");
+    throw new AppError(401, "you already joined this startup");
   }
 
   const joinedStartup = await repository.joinStartup(startupId, userId);
@@ -103,11 +105,11 @@ async function leaveStartup(startupId, userId) {
   const doesStartupExists = await repository.doesStartupExists(startupId);
 
   if (!doesStartupExists) {
-    throw new Error("startup doesnt exists");
+    throw new AppError(401, "startup doesnt exists");
   }
 
   if (!alreadyJoined) {
-    throw new Error("You are not joined in this startup");
+    throw new AppError(401, "You are not joined in this startup");
   }
 
   const userRole = await repository.getUserRole(startupId, userId);
@@ -131,9 +133,7 @@ async function createNewTask(
   const isJoinedInStartup = await repository.isUserInStartup(startupId, userId);
 
   if (!isJoinedInStartup) {
-    throw new Error(
-      "You are not joined in the startup therefor you cannot create new task",
-    );
+    throw new AppError(401, "You are not joined in the startup");
   }
 
   const userRole = await repository.getUserRole(startupId, userId);
@@ -148,20 +148,20 @@ async function createNewTask(
     return newTask;
   }
 
-  return { message: "Failed to create a new task" };
+  throw new AppError(403, "Only owners can create tasks");
 }
 
 async function getAllTasks(startupId, userId) {
   const doesStartupExists = await repository.doesStartupExists(startupId);
 
   if (!doesStartupExists) {
-    throw new Error("Startup doesnt exists");
+    throw new AppError(401, "Startup doesnt exists");
   }
 
   const isUserInStartup = await repository.isUserInStartup(startupId, userId);
 
   if (!isUserInStartup) {
-    throw new Error("You are not joined in the startup");
+    throw new AppError(401, "You are not joined in the startup");
   }
 
   const tasks = await repository.getAllTasks(startupId);
@@ -173,13 +173,13 @@ async function getSingleTask(startupId, taskId, userId) {
   const doesStartupExists = await repository.doesStartupExists(startupId);
 
   if (!doesStartupExists) {
-    throw new Error("Startup doesnt exists");
+    throw new AppError(401, "Startup doesnt exists");
   }
 
   const isUserInStartup = await repository.isUserInStartup(startupId, userId);
 
   if (!isUserInStartup) {
-    throw new Error("You are not joined in the startup");
+    throw new AppError(401, "You are not joined in the startup");
   }
 
   const task = await repository.getSpecificTask(startupId, taskId);
@@ -191,25 +191,25 @@ async function deleteSpecificTask(startupId, taskId, userId) {
   const doesStartupExists = await repository.doesStartupExists(startupId);
 
   if (!doesStartupExists) {
-    throw new Error("Startup doesnt exists");
+    throw new AppError(401, "Startup doesnt exists");
   }
 
   const doesTaskExists = await repository.doesTaskExists(startupId, taskId);
 
   if (!doesTaskExists) {
-    throw new Error("Task does not exists");
+    throw new AppError(401, "Task does not exists");
   }
 
   const isUserInStartup = await repository.isUserInStartup(startupId, userId);
 
   if (!isUserInStartup) {
-    throw new Error("You are not joined in the startup");
+    throw new AppError(401, "You are not joined in the startup");
   }
 
   const userRole = await repository.getUserRole(startupId, userId);
 
   if (!(userRole === "owner" || userRole === "admin")) {
-    throw new Error("Only owners and admins can delete tasks");
+    throw new AppError(403, "Only owners and admins can delete tasks");
   }
 
   const deletedTask = await repository.deleteSpecificTask(startupId, taskId);
@@ -226,33 +226,33 @@ async function updateTaskAssignedUser(
   const doesStartupExists = await repository.doesStartupExists(startupId);
 
   if (!doesStartupExists) {
-    throw new Error("Startup doesnt exists");
+    throw new AppError(401, "Startup doesnt exists");
   }
 
   const doesTaskExists = await repository.doesTaskExists(startupId, taskId);
 
   if (!doesTaskExists) {
-    throw new Error("Task does not exists");
+    throw new AppError(401, "Task does not exists");
   }
   const isUserInStartup = await repository.isUserInStartup(startupId, userId);
 
   if (!isUserInStartup) {
-    throw new Error("You are not joined in the startup");
+    throw new AppError(401, "You are not joined in the startup");
   }
 
   const isSecondUserInStartup = await repository.isUserInStartup(
     startupId,
-    userId,
+    assignedUserId,
   );
 
   if (!isSecondUserInStartup) {
-    throw new Error("Selected user is not in startup");
+    throw new AppError(401, "Selected user is not in startup");
   }
 
   const userRole = await repository.getUserRole(startupId, userId);
 
   if (!(userRole === "owner" || userRole === "admin")) {
-    throw new Error("Only owners and admins can assign tasks");
+    throw new AppError(403, "Only owners and admins can assign tasks");
   }
 
   const updatedTask = await repository.updateTaskAssignedUser(

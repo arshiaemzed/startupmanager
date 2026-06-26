@@ -7,7 +7,7 @@ const { user } = require("pg/lib/defaults");
 async function signup(req, res, next) {
   const { email, password } = req.body;
 
-  const user = service.registerUser(email, password);
+  const user = await service.registerUser(email, password);
 
   return res.status(201).json(user);
 }
