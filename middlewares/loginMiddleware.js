@@ -8,6 +8,7 @@ function loginMiddleware(req, res, next) {
   if (!password || typeof password != "string") {
     return res.status(400).json({ message: "Invalid password" });
   }
+  next();
 }
 
 module.exports = loginMiddleware;

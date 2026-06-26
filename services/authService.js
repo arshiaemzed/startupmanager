@@ -5,9 +5,14 @@ const {
 
 const AppError = require("../customErrors");
 const authRepository = require("../repositories/authRepository");
+const bcrypt = require("bcrypt");
 
 async function registerUser(email, password) {
-  return await authRepository.createNewUser(email, password);
+  const SALT_ROUNDS = 10;
+
+  const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+
+  return await authRepository.createNewUser(email, hashedPassword);
 }
 
 /**
@@ -27,7 +32,9 @@ async function login(email, password) {
     throw new AppError(401, "Invalid credentials.");
   }
 
-  if (user.password !== password) {
+  const passwordMatch = await bcrypt.compare(password, user.password);
+
+  if (!passwordMatch) {
     throw new AppError(401, "Invalid credentials.");
   }
 

@@ -5,7 +5,7 @@ const {
   requireTask,
 } = require("../guards/serviceGuard");
 
-const tasktaskRepository = require("../repositories/taskRepository");
+const taskRepository = require("../repositories/taskRepository");
 
 async function createNewTask(
   title,
@@ -69,7 +69,7 @@ async function deleteSpecificTask(startupId, taskId, userId) {
     "Only owner and admin can delete tasks",
   );
 
-  const deletedTask = await tasktaskRepository.deleteSpecificTask(
+  const deletedTask = await taskRepository.deleteSpecificTask(
     startupId,
     taskId,
   );
@@ -98,7 +98,7 @@ async function updateTaskAssignedUser(
     "Only owner and admin can assign tasks",
   );
 
-  const updatedTask = await tasktaskRepository.updateTaskAssignedUser(
+  const updatedTask = await taskRepository.updateTaskAssignedUser(
     startupId,
     taskId,
     assignedUserId,

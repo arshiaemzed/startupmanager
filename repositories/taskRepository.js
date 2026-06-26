@@ -1,3 +1,5 @@
+const db = require("../database/db");
+
 async function createNewTask(title, description, startupId, assignedUserId) {
   const query = await db.query(
     "INSERT INTO tasks (name, description, startup_id, assigned_to) VALUES ($1, $2, $3, $4) RETURNING id",

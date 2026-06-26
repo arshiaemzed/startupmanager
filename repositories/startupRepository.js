@@ -1,3 +1,5 @@
+const db = require("../database/db");
+
 async function createNewStartup(name, description, userId) {
   const query = await db.query(
     "INSERT INTO startups (owner, name, description) VALUES($1, $2, $3) RETURNING id",
