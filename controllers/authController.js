@@ -19,18 +19,6 @@ async function login(req, res, next) {
 }
 
 function refreshJWT(req, res, next) {
-  const header = req.headers;
-
-  if (!header) {
-    return res.status(400).json({ message: "No header" });
-  }
-
-  const token = header.authorization.split(" ")[1];
-
-  if (!token) {
-    return res.status(400).json({ message: "No token was found" });
-  }
-
   const refreshToken = jwt.verify(token, "REFRESH_SECRET_1234");
   const newAccessToken = generateAccessToken(refreshToken);
   return res.status(200).json(newAccessToken);
@@ -44,18 +32,6 @@ function getProfile(req, res, next) {
 }
 
 async function logout(req, res, next) {
-  const header = req.headers;
-
-  if (!header) {
-    return res.status(400).json({ message: "request has no header" });
-  }
-
-  if (!header.authorization) {
-    return res
-      .status(400)
-      .json({ message: "failed to find the refresh token" });
-  }
-
   const refreshToken = header.authorization.split(" ")[1];
 
   const data = jwt.verify(refreshToken, "REFRESH_SECRET_1234");

@@ -21,6 +21,7 @@ async function requireTask(startupId, taskId) {
 
 async function requirePermission(startupId, userId, permission, errorMessage) {
   const userRole = await startupRepository.getUserRole(startupId, userId);
+
   if (permission.includes(userRole)) {
     return;
   }
