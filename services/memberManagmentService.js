@@ -1,3 +1,4 @@
+const AppError = require("../customErrors");
 const {
   requireStartup,
   requireJoining,
@@ -37,6 +38,10 @@ async function updateUserRole(startupId, userId, affectedUserId, role) {
     "Only owner can change user roles",
   );
 
+  if (userId === affectedUserId) {
+    throw new AppError(400, "You cannot kick yourself");
+  }
+
   const updatedUser = await memberManagmentRepository.updateUserRole(
     startupId,
     affectedUserId,
@@ -46,7 +51,30 @@ async function updateUserRole(startupId, userId, affectedUserId, role) {
   return updatedUser;
 }
 
+async function kickMember(startupId, userId, affectedUserId) {
+  await requireStartup(startupId, userId);
+
+  await requireJoining(startupId, userId);
+
+  await requireJoining(startupId, affectedUserId);
+
+  await requirePermission(
+    startupId,
+    userId,
+    ["owner"],
+    "Only owner's can kick members out of startup",
+  );
+
+  const kickedMember = await memberManagmentRepository.kickMember(
+    startupId,
+    affectedUserId,
+  );
+
+  return kickedMember;
+}
+
 module.exports = {
   getAllMembers,
   updateUserRole,
+  kickMember,
 };

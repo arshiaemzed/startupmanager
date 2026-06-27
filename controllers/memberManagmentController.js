@@ -29,7 +29,22 @@ async function updateMemberRole(req, res, next) {
   return res.status(200).json(updatedUser);
 }
 
+async function kickMember(req, res, next) {
+  const userId = req.user.id;
+  const startupId = req.params.id;
+  const affectedUserId = req.params.memberid;
+
+  const kickedMember = await memberManagmentService.kickMember(
+    startupId,
+    userId,
+    affectedUserId,
+  );
+
+  return res.status(200).json();
+}
+
 module.exports = {
   getAllMembers,
   updateMemberRole,
+  kickMember,
 };

@@ -1,22 +1,33 @@
 const db = require("../database/db");
 
 async function createNewStartup(name, description, userId) {
-  const query = await db.query(
-    "INSERT INTO startups (owner, name, description) VALUES($1, $2, $3) RETURNING id",
-    [userId, name, description],
-  );
+  const client = await db.connect();
+  try {
+    await client.query("BEGIN;");
 
-  const secondQuery = await db.query(
-    "INSERT INTO startup_users (startup_id, user_id, role) VALUES ($1, $2, $3)",
-    [query.rows[0].id, userId, "owner"],
-  );
+    const startupQuery = await client.query(
+      "INSERT INTO startups (owner, name, description) VALUES ($1, $2, $3) RETURNING id",
+      [userId, name, description],
+    );
 
-  return {
-    id: query.rows[0].id,
-    owner: userId,
-    title: name,
-    description: description,
-  };
+    await client.query(
+      "INSERT INTO startup_users (startup_id, user_id, role) VALUES ($1, $2, $3)",
+      [startupQuery.rows[0].id, userId, "owner"],
+    );
+
+    await client.query("COMMIT;");
+    return {
+      id: startupQuery.rows[0].id,
+      owner: userId,
+      title: name,
+      description: description,
+    };
+  } catch (error) {
+    await client.query("ROLLBACK;");
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 async function deleteStartup(startupId) {

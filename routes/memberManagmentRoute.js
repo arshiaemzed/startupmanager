@@ -4,6 +4,7 @@ const memeberManagmentMiddleware = require("../middlewares/memberManagmentMiddle
 const asyncHandler = require("../middlewares/asyncHandler");
 const memberManagmentController = require("../controllers/memberManagmentController");
 const updateMemberRoleMiddleware = require("../middlewares/updateMemberRoleMiddleware");
+const kickMemberMiddleware = require("../middlewares/kickMemberMiddleware");
 
 const router = express.Router();
 
@@ -19,6 +20,13 @@ router.patch(
   verifyJWT,
   updateMemberRoleMiddleware,
   memberManagmentController.updateMemberRole,
+);
+
+router.delete(
+  "/startup/:id/members/:memberid/kick",
+  verifyJWT,
+  kickMemberMiddleware,
+  memberManagmentController.kickMember,
 );
 
 module.exports = router;

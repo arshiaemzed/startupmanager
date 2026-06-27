@@ -18,7 +18,17 @@ async function updateUserRole(startupId, userId, role) {
   return query.rows;
 }
 
+async function kickMember(startupId, userId) {
+  const query = await db.query(
+    "DELETE FROM startup_users WHERE startup_id = $1 AND user_id = $2",
+    [startupId, userId],
+  );
+
+  return query.rows;
+}
+
 module.exports = {
   getAllMembers,
   updateUserRole,
+  kickMember,
 };
