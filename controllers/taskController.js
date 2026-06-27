@@ -69,10 +69,30 @@ async function updateTaskAssignedUser(req, res, next) {
   return res.status(200).json(updatedTask);
 }
 
+async function updateTask(req, res, next) {
+  const startupId = req.params.startupid;
+  const taskId = req.params.id;
+  const userId = req.user.id;
+
+  const { title, description, status } = req.body;
+
+  const updatedTask = await taskService.updateTask(
+    startupId,
+    taskId,
+    userId,
+    title,
+    description,
+    status,
+  );
+
+  return res.status(200).json(updateTask);
+}
+
 module.exports = {
   createNewTask,
   getAllTasks,
   getSingleTask,
   deleteSingleTask,
   updateTaskAssignedUser,
+  updateTask,
 };

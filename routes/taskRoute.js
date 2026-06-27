@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const createNewTaskMiddleware = require("../middlewares/createNewTaskMiddleware");
 const getAllTasksMiddleware = require("../middlewares/getAllTasksMiddleware");
+const updateTaskMiddleware = require("../middlewares/updateTaskMiddleware");
 const verifyJWT = require("../middlewares/jwt");
 const taskController = require("../controllers/taskController");
 const asyncHandler = require("../middlewares/asyncHandler");
@@ -42,6 +43,13 @@ router.patch(
   verifyJWT,
   updateTaskAssignedUserMiddleware,
   asyncHandler(taskController.updateTaskAssignedUser),
+);
+
+router.patch(
+  "/startup/:startupid/tasks/:id",
+  verifyJWT,
+  updateTaskMiddleware,
+  asyncHandler(taskController.updateTask),
 );
 
 module.exports = router;

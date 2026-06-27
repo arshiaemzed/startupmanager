@@ -8,6 +8,7 @@ const errorHandlerMiddleware = require("./middlewares/errorHandler");
 const authRoute = require("./routes/authRoute");
 const startupRoute = require("./routes/startupRoute");
 const taskRoute = require("./routes/taskRoute");
+const memberManagmentRoute = require("./routes/memberManagmentRoute");
 
 app.use(express.json());
 
@@ -16,6 +17,8 @@ app.use(authRoute);
 app.use(startupRoute);
 
 app.use(taskRoute);
+
+app.use(memberManagmentRoute);
 
 app.use(errorHandlerMiddleware);
 

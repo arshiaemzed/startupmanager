@@ -107,10 +107,34 @@ async function updateTaskAssignedUser(
   return updatedTask;
 }
 
+async function updateTask(
+  startupId,
+  taskId,
+  userId,
+  title,
+  description,
+  status,
+) {
+  await requireStartup(startupId);
+
+  await requireJoining(startupId, userId);
+
+  const updatedTask = await taskRepository.updateTask(
+    startupId,
+    taskId,
+    title,
+    description,
+    status,
+  );
+
+  return updateTask;
+}
+
 module.exports = {
   createNewTask,
   getAllTasks,
   getSingleTask,
   deleteSpecificTask,
   updateTaskAssignedUser,
+  updateTask,
 };
