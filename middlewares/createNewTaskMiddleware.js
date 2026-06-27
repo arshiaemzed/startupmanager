@@ -1,29 +1,21 @@
-function createNewTaskMiddleware(req, res, next) {
-  const { title, description } = req.body;
+const validateField = require("../utils/validateField");
+const validateParam = require("../utils/validateParam");
 
+function createNewTaskMiddleware(req, res, next) {
   const startup_id = req.params.id;
 
-  if (!startup_id) {
-    return res
-      .status(400)
-      .json({ message: "startup_id param missing (Bad request)" });
-  }
+  validateParam(startup_id, res, 400, "startup_id param missing (Bad request)");
 
-  if (!title || title.trim() === "" || typeof title != "string") {
-    return res
-      .status(400)
-      .json({ message: "title field missing (Bad request)" });
-  }
+  const { title, description } = req.body;
 
-  if (
-    !description ||
-    description.trim() === "" ||
-    typeof description != "string"
-  ) {
-    return res
-      .status(400)
-      .json({ message: "description field missing (Bad request)" });
-  }
+  validateField(title, res, 400, "title field missing (Bad request)");
+
+  validateField(
+    description,
+    res,
+    400,
+    "description field missing (Bad request)",
+  );
 
   next();
 }

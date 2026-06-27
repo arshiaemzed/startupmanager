@@ -1,15 +1,18 @@
+const validateParam = require("../utils/validateParam");
+
 function kickMemberMiddleware(req, res, next) {
   const startupId = req.params.id;
 
-  if (!startupId) {
-    return res.status(400).json({ message: "No id param (Bad request)" });
-  }
+  validateParam(startupId, res, 400, "id param missing (Bad request");
 
   const affectedUserId = req.params.memberid;
 
-  if (!affectedUserId) {
-    return res.status(400).json({ message: "No memberid param (Bad request)" });
-  }
+  validateParam(
+    affectedUserId,
+    res,
+    400,
+    "memberid param missing (Bad request)",
+  );
 
   next();
 }

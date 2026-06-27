@@ -1,3 +1,6 @@
+const validateField = require("../utils/validateField");
+const validateParam = require("../utils/validateParam");
+
 function updateTaskAssignedUserMiddleware(req, res, next) {
   const taskId = req.params.id;
 
@@ -5,19 +8,11 @@ function updateTaskAssignedUserMiddleware(req, res, next) {
 
   const assignedId = req.body.assignedId;
 
-  if (!startupId) {
-    return res.status(400).json({ message: "No startupid (Bad request)" });
-  }
+  validateParam(startupId, res, 400, "startupid param missing (Bad request)");
 
-  if (!taskId) {
-    return res.status(400).json({ message: "No id param (Bad request)" });
-  }
+  validateParam(taskId, res, 400, "id param missing (Bad request)");
 
-  if (!assignedId) {
-    return res
-      .status(400)
-      .json({ message: "No assignedId field (Bad request)" });
-  }
+  validateField(assignedId, res, 400, "Invalid id for assigned user");
 
   next();
 }

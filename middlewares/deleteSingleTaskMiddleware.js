@@ -1,17 +1,13 @@
+const validateParam = require("../utils/validateParam");
+
 function deleteSingleTaskMiddleware(req, res, next) {
   const startupId = req.params.startupid;
 
   const taskId = req.params.id;
 
-  if (!startupId) {
-    return res
-      .status(400)
-      .json({ message: "No startupid param (Bad request)" });
-  }
+  validateParam(startupId, res, 400, "startup param missing (Bad request)");
 
-  if (!taskId) {
-    return res.status(400).json({ message: "No id param (Bad request)" });
-  }
+  validateParam(taskId, res, 400, "id param missing (Bad request)");
 
   next();
 }
