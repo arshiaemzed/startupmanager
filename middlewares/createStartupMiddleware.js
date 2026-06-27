@@ -3,9 +3,10 @@ function createStartupMiddleware(req, res, next) {
   const description = req.body.description;
 
   if (!name || name.trim() === "" || typeof name != "string") {
-    return res
-      .status(400)
-      .json({ message: "name field missing (Bad request)" });
+    return res.status(400).json({
+      success: false,
+      error: { message: "No name field (Bad request)", code: 400 },
+    });
   }
 
   if (
@@ -13,9 +14,10 @@ function createStartupMiddleware(req, res, next) {
     description.trim() === "" ||
     typeof description != "string"
   ) {
-    return res
-      .status(400)
-      .json({ message: "description field missing (Bad request)" });
+    return res.status(400).json({
+      success: false,
+      error: { message: "No description field (Bad request)", code: 400 },
+    });
   }
 
   next();
