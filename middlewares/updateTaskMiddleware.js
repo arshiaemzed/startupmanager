@@ -14,8 +14,6 @@ function updateTaskMiddleware(req, res, next) {
 
   const status = req.body.status;
 
-  console.log(status);
-
   if (
     status &&
     status != "todo" &&
