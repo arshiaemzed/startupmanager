@@ -32,8 +32,17 @@ async function leaveStartup(req, res, next) {
   return res.status(200).json(leavedStartup);
 }
 
+async function getUserStartups(req, res, next) {
+  const userId = req.user.id;
+
+  const startups = await startupService.getUserStartups(userId);
+
+  return res.status(200).json(startups);
+}
+
 module.exports = {
   createNewStartup,
   joinStartup,
   leaveStartup,
+  getUserStartups,
 };

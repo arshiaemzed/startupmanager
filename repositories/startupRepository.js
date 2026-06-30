@@ -30,6 +30,20 @@ async function createNewStartup(name, description, userId) {
   }
 }
 
+async function getUserStartups(userId) {
+  const query = await db.query(
+    `
+   SELECT * FROM startups s
+   INNER JOIN startup_users su
+   ON s.id = su.startup_id
+   WHERE user_id = $1; 
+  `,
+    [userId],
+  );
+
+  return query.rows;
+}
+
 async function deleteStartup(startupId) {
   const query = await db.query("DELETE FROM startups WHERE id = $1", [
     startupId,
@@ -90,4 +104,5 @@ module.exports = {
   isUserInStartup,
   doesStartupExists,
   getUserRole,
+  getUserStartups,
 };
