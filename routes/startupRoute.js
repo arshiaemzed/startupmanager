@@ -6,6 +6,8 @@ const createStartupMiddleware = require("../middlewares/createStartupMiddleware"
 const startupController = require("../controllers/startupController");
 const asyncHandler = require("../middlewares/asyncHandler");
 
+router.get("/startups", verifyJWT);
+
 router.post(
   "/startup/join/:id",
   verifyJWT,

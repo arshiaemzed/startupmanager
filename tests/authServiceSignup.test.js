@@ -6,7 +6,7 @@ jest.mock("bcrypt");
 
 jest.mock("../repositories/authRepository");
 
-test("", async () => {
+test("returns user email and password object when succeed and creates new user in the database", async () => {
   bcrypt.hash.mockResolvedValue("mypassword1234");
 
   authRepository.createNewUser.mockResolvedValue({

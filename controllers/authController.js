@@ -32,6 +32,8 @@ function getProfile(req, res, next) {
 }
 
 async function logout(req, res, next) {
+  const header = req.headers;
+
   const refreshToken = header.authorization.split(" ")[1];
 
   const data = jwt.verify(refreshToken, "REFRESH_SECRET_1234");

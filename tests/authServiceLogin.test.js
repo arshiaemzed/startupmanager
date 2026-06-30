@@ -8,6 +8,7 @@ const {
 } = require("../token_generate");
 
 const authRepository = require("../repositories/authRepository");
+const AppError = require("../customErrors");
 
 jest.mock("bcrypt");
 
@@ -15,7 +16,7 @@ jest.mock("../token_generate");
 
 jest.mock("../repositories/authRepository");
 
-test("", async () => {
+test("returns accessToken and refreshToken when succeeding", async () => {
   await authRepository.findUser.mockResolvedValue({
     id: 1,
     email: "test@gmail.com",
@@ -34,4 +35,12 @@ test("", async () => {
     accessToken: "test_access_token",
     refreshToken: "test_refresh_token",
   });
+});
+
+test("throw AppError object when password doesnt match", async () => {
+  bcrypt.compare.mockResolvedValue(false);
+
+  expect(await login("test@gmail.com", "test1234")).toEqual(
+    new AppError(401, "Invalid credentials."),
+  );
 });
