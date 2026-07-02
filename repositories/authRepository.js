@@ -11,19 +11,19 @@ async function createNewUser(email, password) {
   return { email: email, password: password };
 }
 
-async function isRefreshTokenValid(userId, token) {
+async function isRefreshTokenValid(token) {
   const found = await db.query(
-    "SELECT * FROM user_refresh_tokens WHERE user_id = $1 AND token = $2",
-    [userId, token],
+    "SELECT * FROM user_refresh_tokens WHERE token = $1",
+    [token],
   );
 
   return found.rowCount > 0;
 }
 
-async function deleteRefreshToken(userId, token) {
+async function deleteRefreshToken(token) {
   const found = await db.query(
-    "DELETE FROM user_refresh_tokens WHERE user_id = $1 AND token = $2",
-    [userId, token],
+    "DELETE FROM user_refresh_tokens WHERE  token = $1",
+    [token],
   );
 
   return found.rowCount > 0;

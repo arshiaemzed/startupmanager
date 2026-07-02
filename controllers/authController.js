@@ -18,10 +18,11 @@ async function login(req, res, next) {
   return res.status(200).json(token);
 }
 
-function refreshJWT(req, res, next) {
-  const token = req.headers.authorization.split(" ")[1];
-  const refreshToken = jwt.verify(token, "REFRESH_SECRET_1234");
-  const newAccessToken = generateAccessToken(refreshToken);
+async function refreshJWT(req, res, next) {
+  const refreshToken = req.headers.authorization.split(" ")[1];
+
+  const newAccessToken = await authService.refresh(refreshToken);
+
   return res.status(200).json(newAccessToken);
 }
 
@@ -33,13 +34,8 @@ function getProfile(req, res, next) {
 }
 
 async function logout(req, res, next) {
-  const header = req.headers;
-
-  const refreshToken = header.authorization.split(" ")[1];
-
-  const data = jwt.verify(refreshToken, "REFRESH_SECRET_1234");
-
-  const logout = await authService.logout(data.id, refreshToken);
+  const refreshToken = req.headers.authorization.split(" ")[1];
+  const logout = await authService.logout(refreshToken);
   return res.status(200).json(logout);
 }
 
