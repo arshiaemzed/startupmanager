@@ -19,6 +19,7 @@ async function login(req, res, next) {
 }
 
 function refreshJWT(req, res, next) {
+  const token = req.headers.authorization.split(" ")[1];
   const refreshToken = jwt.verify(token, "REFRESH_SECRET_1234");
   const newAccessToken = generateAccessToken(refreshToken);
   return res.status(200).json(newAccessToken);

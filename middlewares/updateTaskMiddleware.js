@@ -18,7 +18,11 @@ function updateTaskMiddleware(req, res, next) {
     status != "done"
   ) {
     return res.status(400).json({
-      message: "Status can only be 'todo', 'in_progress', and 'done'",
+      success: false,
+      error: {
+        message: "Status can only be 'todo', 'in_progress', and 'done'",
+        code: 400,
+      },
     });
   }
   next();

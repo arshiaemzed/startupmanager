@@ -8,9 +8,10 @@ function signupMiddleware(req, res, next) {
   validateField(email, res, 400, "Please enter an valid password");
 
   if (password.length < 6) {
-    return res
-      .status(400)
-      .json({ message: "Password length must be more than 6" });
+    return res.status(400).json({
+      success: false,
+      error: { message: "Password length must be more than 6", code: 400 },
+    });
   }
 
   next();

@@ -32,8 +32,8 @@ test("returns accessToken and refreshToken when succeeding", async () => {
   authRepository.storeRefreshToken.mockResolvedValue("test");
 
   expect(await login("test@gmail.com", "test1234")).toEqual({
-    accessToken: "test_access_token",
-    refreshToken: "test_refresh_token",
+    access_token: "test_access_token",
+    refresh_token: "test_refresh_token",
   });
 });
 

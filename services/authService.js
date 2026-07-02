@@ -44,8 +44,8 @@ async function login(email, password) {
   await authRepository.storeRefreshToken(user.id, refreshToken);
 
   return {
-    accessToken: accessToken,
-    refreshToken: refreshToken,
+    access_token: accessToken,
+    refresh_token: refreshToken,
   };
 }
 

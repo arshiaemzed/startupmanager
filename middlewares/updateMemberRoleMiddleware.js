@@ -12,9 +12,13 @@ function updateMemberRoleMiddleware(req, res, next) {
   const newRole = req.body.role;
 
   if (newRole != "admin" && newRole != "worker") {
-    return res
-      .status(400)
-      .message({ message: "You can only promote users to admin or worker" });
+    return res.status(400).json({
+      success: false,
+      error: {
+        message: "You can only promote users to admin or worker",
+        code: 400,
+      },
+    });
   }
 
   next();
