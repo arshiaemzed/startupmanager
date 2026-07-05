@@ -1,3 +1,4 @@
+const errorCodes = require("../utils/errorCodes");
 const validateParam = require("../utils/validateParam");
 
 function updateMemberRoleMiddleware(req, res, next) {
@@ -16,7 +17,7 @@ function updateMemberRoleMiddleware(req, res, next) {
       success: false,
       error: {
         message: "You can only promote users to admin or worker",
-        code: 400,
+        code: errorCodes.CAN_ONLY_PROMOTE_TO_ADMIN_OR_WORKER,
       },
     });
   }

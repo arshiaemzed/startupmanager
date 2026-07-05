@@ -6,6 +6,7 @@ const {
 } = require("../guards/serviceGuard");
 
 const memberManagmentRepository = require("../repositories/memberManagmentRepository");
+const errorCodes = require("../utils/errorCodes");
 
 async function getAllMembers(userId, startupId) {
   await requireStartup(startupId);
@@ -39,7 +40,11 @@ async function updateUserRole(startupId, userId, affectedUserId, role) {
   );
 
   if (userId === affectedUserId) {
-    throw new AppError(400, "You cannot kick yourself");
+    throw new AppError(
+      400,
+      errorCodes.CANNOT_KICK_YOURSELF,
+      "You cannot kick yourself",
+    );
   }
 
   const updatedUser = await memberManagmentRepository.updateUserRole(

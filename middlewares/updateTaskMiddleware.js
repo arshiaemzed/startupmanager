@@ -1,3 +1,4 @@
+const errorCodes = require("../utils/errorCodes");
 const validateParam = require("../utils/validateParam");
 
 function updateTaskMiddleware(req, res, next) {
@@ -21,7 +22,7 @@ function updateTaskMiddleware(req, res, next) {
       success: false,
       error: {
         message: "Status can only be 'todo', 'in_progress', and 'done'",
-        code: 400,
+        code: errorCodes.INVALID_TASK_STATUS,
       },
     });
   }

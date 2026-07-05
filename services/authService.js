@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 const AppError = require("../customErrors");
 const authRepository = require("../repositories/authRepository");
 const bcrypt = require("bcrypt");
+const errorCodes = require("../utils/errorCodes");
 
 async function registerUser(email, password) {
   const SALT_ROUNDS = 10;
@@ -31,13 +32,21 @@ async function login(email, password) {
   const user = await authRepository.findUser(email);
 
   if (!user) {
-    throw new AppError(401, "Invalid credentials.");
+    throw new AppError(
+      401,
+      errorCodes.INVALID_CREDENTIALS,
+      "Invalid credentials.",
+    );
   }
 
   const passwordMatch = await bcrypt.compare(password, user.password);
 
   if (!passwordMatch) {
-    throw new AppError(401, "Invalid credentials.");
+    throw new AppError(
+      401,
+      errorCodes.INVALID_CREDENTIALS,
+      "Invalid credentials.",
+    );
   }
 
   const accessToken = generateAccessToken(user);
@@ -61,23 +70,35 @@ async function login(email, password) {
  * @returns {Promise<message: string>}
  */
 async function logout(refreshToken) {
-  const validRefreshToken =
-    await authRepository.isRefreshTokenValid(refreshToken);
-  if (!validRefreshToken) {
-    throw new AppError(401, "Refresh token is not valid");
+  const exists = await authRepository.isRefreshTokenValid(refreshToken);
+
+  if (!exists) {
+    throw new AppError(
+      401,
+      errorCodes.INVALID_OR_EXPIRED_REFRESH_TOKEN,
+      "Refresh token is not valid",
+    );
   }
 
-  const data = jwt.verify(refreshToken, "REFRESH_SECRET_1234");
-
-  if (!data) {
-    throw new AppError(401, "Invalid or expired refresh token");
+  try {
+    jwt.verify(refreshToken, "REFRESH_SECRET_1234");
+  } catch (error) {
+    throw new AppError(
+      401,
+      errorCodes.INVALID_OR_EXPIRED_REFRESH_TOKEN,
+      "Invalid or expired refresh token",
+    );
   }
 
   const deletedRefreshToken =
     await authRepository.deleteRefreshToken(refreshToken);
 
   if (!deletedRefreshToken) {
-    throw new AppError(401, "Failed to delete refresh token");
+    throw new AppError(
+      401,
+      errorCodes.FAILED_TO_DELETE_REFRESH_TOKEN,
+      "Failed to delete refresh token",
+    );
   }
 
   return { message: "Successfully logged out and killed the refresh token" };
@@ -88,18 +109,25 @@ async function refresh(refreshToken) {
     await authRepository.isRefreshTokenValid(refreshToken);
 
   if (!validRefreshToken) {
-    throw new AppError(400, "Invalid refresh token.");
+    throw new AppError(
+      400,
+      errorCodes.INVALID_OR_EXPIRED_REFRESH_TOKEN,
+      "Invalid refresh token.",
+    );
   }
 
-  const userData = jwt.verify(refreshToken, "REFRESH_SECRET_1234");
+  try {
+    const userData = jwt.verify(refreshToken, "REFRESH_SECRET_1234");
+    const newAccessToken = generateAccessToken(userData);
 
-  if (!userData) {
-    throw new AppError(403, "Failed to verify refresh token");
+    return newAccessToken;
+  } catch (error) {
+    throw new AppError(
+      401,
+      errorCodes.INVALID_OR_EXPIRED_REFRESH_TOKEN,
+      "Invalid or exipred refresh token.",
+    );
   }
-
-  const newAccessToken = generateAccessToken(userData);
-
-  return newAccessToken;
 }
 
 module.exports = {

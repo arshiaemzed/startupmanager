@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const errorCodes = require("../utils/errorCodes");
 
 function verifyJWT(req, res, next) {
   const header = req.headers;
@@ -6,7 +7,7 @@ function verifyJWT(req, res, next) {
   if (!header) {
     return res.status(400).json({
       success: false,
-      error: { message: "No header (Bad request)", code: 400 },
+      error: { message: "No header (Bad request)", code: errorCodes.NO_HEADER },
     });
   }
 
@@ -15,7 +16,10 @@ function verifyJWT(req, res, next) {
   if (!authorization) {
     return res.status(400).json({
       success: false,
-      error: { message: "No authorization (Bad request)", code: 400 },
+      error: {
+        message: "No authorization (Bad request)",
+        code: errorCodes.NO_AUTHORIZATION,
+      },
     });
   }
 
@@ -24,7 +28,10 @@ function verifyJWT(req, res, next) {
   if (!token) {
     return res.status(400).json({
       success: false,
-      error: { message: "No token (Bad request)", code: 400 },
+      error: {
+        message: "No token (Bad request)",
+        code: errorCodes.NO_ACCESS_TOKEN,
+      },
     });
   }
 
@@ -35,7 +42,10 @@ function verifyJWT(req, res, next) {
   } catch (error) {
     return res.status(401).json({
       success: false,
-      error: { message: "Invalid or expired token", code: 400 },
+      error: {
+        message: "Invalid or expired access token",
+        code: errorCodes.INVALID_OR_EXIPRED_ACCESS_TOKEN,
+      },
     });
   }
 }

@@ -33,11 +33,9 @@ async function createNewStartup(name, description, userId) {
 async function getUserStartups(userId) {
   const query = await db.query(
     `
-   SELECT * FROM startups s
-   INNER JOIN startup_users su
-   ON s.id = su.startup_id
-   WHERE user_id = $1; 
-  `,
+      SELECT * FROM startups
+      LEFT JOIN startup_users ON startups.id = startup_users.startup_id AND startup_users.user_id = $1
+    `,
     [userId],
   );
 

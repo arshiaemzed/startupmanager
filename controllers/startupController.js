@@ -1,7 +1,9 @@
 const startupService = require("../services/startupService");
 
 async function createNewStartup(req, res, next) {
-  const { name, description } = req.body;
+  const name = req.body.name;
+
+  const description = req.body.description;
 
   const userId = req.user.id;
 

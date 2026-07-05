@@ -1,3 +1,4 @@
+const errorCodes = require("../utils/errorCodes");
 const validateField = require("../utils/validateField");
 
 function signupMiddleware(req, res, next) {
@@ -10,7 +11,10 @@ function signupMiddleware(req, res, next) {
   if (password.length < 6) {
     return res.status(400).json({
       success: false,
-      error: { message: "Password length must be more than 6", code: 400 },
+      error: {
+        message: "Password length must be more than 6",
+        code: errorCodes.INVALID_PASSWORD_LENGTH,
+      },
     });
   }
 
