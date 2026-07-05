@@ -42,9 +42,19 @@ async function getUserStartups(req, res, next) {
   return res.status(200).json(startups);
 }
 
+async function getStartup(req, res, next) {
+  const startupId = req.params.id;
+  const userId = req.user.id;
+
+  const startup = await startupService.getStartup(startupId, userId);
+
+  return res.status(200).json(startup);
+}
+
 module.exports = {
   createNewStartup,
   joinStartup,
   leaveStartup,
   getUserStartups,
+  getStartup,
 };

@@ -5,6 +5,7 @@ const membershipMiddleware = require("../middlewares/membershipMiddleware");
 const createStartupMiddleware = require("../middlewares/createStartupMiddleware");
 const startupController = require("../controllers/startupController");
 const asyncHandler = require("../middlewares/asyncHandler");
+const getStartupMiddleware = require("../middlewares/getStartupMiddleware");
 
 router.get("/startups", verifyJWT, startupController.getUserStartups);
 
@@ -27,6 +28,13 @@ router.post(
   verifyJWT,
   createStartupMiddleware,
   asyncHandler(startupController.createNewStartup),
+);
+
+router.get(
+  "/startup/:id",
+  verifyJWT,
+  getStartupMiddleware,
+  asyncHandler(startupController.getStartup),
 );
 
 module.exports = router;

@@ -30,6 +30,25 @@ async function createNewStartup(name, description, userId) {
   }
 }
 
+async function getStartup(startupId) {
+  console.log(startupId);
+  const memberQuery = await db.query(
+    "SELECT * FROM startup_users WHERE startup_id = $1;",
+    [startupId],
+  );
+
+  const tasksQuery = await db.query(
+    "SELECT * FROM tasks WHERE startup_id = $1;",
+    [startupId],
+  );
+
+  return {
+    startup_id: startupId,
+    tasks: tasksQuery.rows,
+    members: memberQuery.rows,
+  };
+}
+
 async function getUserStartups(userId) {
   const query = await db.query(
     `
@@ -38,6 +57,8 @@ async function getUserStartups(userId) {
     `,
     [userId],
   );
+
+  console.log(query.rows);
 
   return query.rows;
 }
@@ -103,4 +124,5 @@ module.exports = {
   doesStartupExists,
   getUserRole,
   getUserStartups,
+  getStartup,
 };

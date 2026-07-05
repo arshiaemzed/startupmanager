@@ -48,9 +48,15 @@ async function getUserStartups(userId) {
   return startups;
 }
 
+async function getStartup(startupId, userId) {
+  const startup = await startupRepository.getStartup(startupId);
+  return startup;
+}
+
 module.exports = {
   createNewStartup,
   joinStartup,
   leaveStartup,
   getUserStartups,
+  getStartup,
 };
