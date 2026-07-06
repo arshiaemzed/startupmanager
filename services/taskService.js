@@ -13,6 +13,7 @@ async function createNewTask(
   startupId,
   assigned_to,
   userId,
+  status,
 ) {
   await requireStartup(startupId);
 
@@ -30,6 +31,7 @@ async function createNewTask(
     description,
     startupId,
     assigned_to ?? null,
+    status ?? null,
   );
 
   return newTask;

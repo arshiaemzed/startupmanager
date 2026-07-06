@@ -1,7 +1,7 @@
 const taskService = require("../services/taskService");
 
 async function createNewTask(req, res, next) {
-  const { title, description, assigned_to } = req.body;
+  const { title, description, assigned_to, status } = req.body;
 
   const startup_id = req.params.id;
 
@@ -13,6 +13,7 @@ async function createNewTask(req, res, next) {
     startup_id,
     assigned_to,
     userId,
+    status,
   );
   return res.status(200).json(newTask);
 }

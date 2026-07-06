@@ -1,15 +1,23 @@
 const db = require("../database/db");
 
-async function createNewTask(title, description, startupId, assignedUserId) {
+async function createNewTask(
+  title,
+  description,
+  startupId,
+  assignedUserId,
+  status,
+) {
   const query = await db.query(
-    "INSERT INTO tasks (name, description, startup_id, assigned_to) VALUES ($1, $2, $3, $4) RETURNING id",
-    [title, description, startupId, assignedUserId ?? null],
+    "INSERT INTO tasks (name, description, startup_id, assigned_to, status) VALUES ($1, $2, $3, $4, $5) RETURNING id",
+    [title, description, startupId, assignedUserId ?? null, status ?? "todo"],
   );
 
   return {
     id: query.rows[0].id,
     title: title,
+    description: description,
     startup_id: startupId,
+    status: status,
     assigned_to: assignedUserId,
   };
 }
