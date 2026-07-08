@@ -31,7 +31,6 @@ async function createNewStartup(name, description, userId) {
 }
 
 async function getStartup(startupId) {
-  console.log(startupId);
   const memberQuery = await db.query(
     "SELECT * FROM startup_users WHERE startup_id = $1;",
     [startupId],
@@ -57,8 +56,6 @@ async function getUserStartups(userId) {
     `,
     [userId],
   );
-
-  console.log(query.rows);
 
   return query.rows;
 }

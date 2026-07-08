@@ -2,6 +2,7 @@ const {
   requireStartup,
   requireNotBeginJoined,
   requireJoining,
+  requirePermission,
 } = require("../guards/serviceGuard");
 
 const startupRepository = require("../repositories/startupRepository");
@@ -53,8 +54,18 @@ async function getStartup(startupId, userId) {
   return startup;
 }
 
+async function deleteStartup(startupId, userId) {
+  await requireStartup(startupId);
+  await requireJoining(startupId, userId);
+  await requirePermission(startupId, userId, ["owner"]);
+
+  const deletedStartup = await startupRepository.deleteStartup(startupId);
+
+  return deletedStartup;
+}
 module.exports = {
   createNewStartup,
+  deleteStartup,
   joinStartup,
   leaveStartup,
   getUserStartups,

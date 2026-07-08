@@ -76,12 +76,13 @@ async function updateTask(startupId, taskId, title, description, status) {
       description = COALESCE($2, description),
       status = COALESCE($3, status)
     WHERE 
-    startup_id = $4 AND id = $5
+      startup_id = $4 AND id = $5
+    RETURNING*;
     `,
     [title, description, status, startupId, taskId],
   );
 
-  return query.rows;
+  return query.rows[0];
 }
 
 module.exports = {

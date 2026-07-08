@@ -51,8 +51,18 @@ async function getStartup(req, res, next) {
   return res.status(200).json(startup);
 }
 
+async function deleteStartup(req, res, next) {
+  const userId = req.user.id;
+  const startupId = req.params.id;
+
+  const deletedStartup = await startupService.deleteStartup(startupId, userId);
+
+  return res.status(200).json(deletedStartup);
+}
+
 module.exports = {
   createNewStartup,
+  deleteStartup,
   joinStartup,
   leaveStartup,
   getUserStartups,

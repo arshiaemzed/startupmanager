@@ -129,7 +129,7 @@ async function updateTask(
     status,
   );
 
-  return updateTask;
+  return updatedTask;
 }
 
 module.exports = {

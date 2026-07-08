@@ -6,6 +6,7 @@ const createStartupMiddleware = require("../middlewares/createStartupMiddleware"
 const startupController = require("../controllers/startupController");
 const asyncHandler = require("../middlewares/asyncHandler");
 const getStartupMiddleware = require("../middlewares/getStartupMiddleware");
+const deleteStartupMiddleware = require("../middlewares/deleteStartupMiddleware");
 
 router.get("/startups", verifyJWT, startupController.getUserStartups);
 
@@ -35,6 +36,13 @@ router.get(
   verifyJWT,
   getStartupMiddleware,
   asyncHandler(startupController.getStartup),
+);
+
+router.delete(
+  "/startup/:id",
+  verifyJWT,
+  deleteStartupMiddleware,
+  startupController.deleteStartup,
 );
 
 module.exports = router;

@@ -86,7 +86,7 @@ async function updateTask(req, res, next) {
     status,
   );
 
-  return res.status(200).json(updateTask);
+  return res.status(200).json(updatedTask);
 }
 
 module.exports = {
