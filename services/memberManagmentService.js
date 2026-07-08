@@ -25,6 +25,21 @@ async function getAllMembers(userId, startupId) {
   return members;
 }
 
+async function getSpecificMember(startupId, userId, targetId) {
+  requireStartup(startupId);
+
+  requireJoining(startupId, targetId);
+
+  requireJoining(startupId, targetId);
+
+  const member = await memberManagmentRepository.getSpecificMember(
+    startupId,
+    targetId,
+  );
+
+  return member;
+}
+
 async function updateUserRole(startupId, userId, affectedUserId, role) {
   await requireStartup(startupId);
 
@@ -80,6 +95,7 @@ async function kickMember(startupId, userId, affectedUserId) {
 
 module.exports = {
   getAllMembers,
+  getSpecificMember,
   updateUserRole,
   kickMember,
 };

@@ -9,6 +9,15 @@ async function getAllMembers(startupId) {
   return query.rows;
 }
 
+async function getSpecificMember(startupId, userId) {
+  const query = await db.query(
+    "SELECT * FROM startup_users WHERE startup_id = $1 AND user_id = $2",
+    [startupId, userId],
+  );
+
+  return query.rows[0];
+}
+
 async function updateUserRole(startupId, userId, role) {
   const query = await db.query(
     "UPDATE startup_users SET role = $1 WHERE startup_id = $2 AND user_id = $3",
@@ -29,6 +38,7 @@ async function kickMember(startupId, userId) {
 
 module.exports = {
   getAllMembers,
+  getSpecificMember,
   updateUserRole,
   kickMember,
 };

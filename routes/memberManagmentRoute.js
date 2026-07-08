@@ -5,6 +5,7 @@ const asyncHandler = require("../middlewares/asyncHandler");
 const memberManagmentController = require("../controllers/memberManagmentController");
 const updateMemberRoleMiddleware = require("../middlewares/updateMemberRoleMiddleware");
 const kickMemberMiddleware = require("../middlewares/kickMemberMiddleware");
+const getSpecificMemberMiddleware = require("../middlewares/getSpecificMemberMiddleware");
 
 const router = express.Router();
 
@@ -13,6 +14,13 @@ router.get(
   verifyJWT,
   memeberManagmentMiddleware,
   asyncHandler(memberManagmentController.getAllMembers),
+);
+
+router.get(
+  "/startup/:id/members/:memberid",
+  verifyJWT,
+  getSpecificMemberMiddleware,
+  memberManagmentController.getSpecificMember,
 );
 
 router.patch(

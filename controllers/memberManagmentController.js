@@ -10,6 +10,22 @@ async function getAllMembers(req, res, next) {
   return res.status(200).json(members);
 }
 
+async function getSpecificMember(req, res, next) {
+  const userId = req.user.id;
+
+  const memberId = req.params.memberid;
+
+  const startupId = req.params.id;
+
+  const member = await memberManagmentService.getSpecificMember(
+    startupId,
+    userId,
+    memberId,
+  );
+
+  return res.status(200).json(member);
+}
+
 async function updateMemberRole(req, res, next) {
   const startupId = req.params.id;
 
@@ -45,6 +61,8 @@ async function kickMember(req, res, next) {
 
 module.exports = {
   getAllMembers,
+  getSpecificMember,
   updateMemberRole,
   kickMember,
+  getSpecificMember,
 };
