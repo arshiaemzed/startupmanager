@@ -8,17 +8,18 @@ async function createNewTask(
   status,
 ) {
   const query = await db.query(
-    "INSERT INTO tasks (name, description, startup_id, assigned_to, status) VALUES ($1, $2, $3, $4, $5) RETURNING id",
+    "INSERT INTO tasks (name, description, startup_id, assigned_to, status) VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at",
     [title, description, startupId, assignedUserId ?? null, status ?? "todo"],
   );
 
   return {
     id: query.rows[0].id,
-    title: title,
+    name: title,
     description: description,
     startup_id: startupId,
     status: status,
     assigned_to: assignedUserId,
+    created_at: query.rows[0].created_at,
   };
 }
 
@@ -68,18 +69,26 @@ async function updateTaskAssignedUser(startupId, taskId, assignedUserId) {
 
 // task status column is using ENUM TYPE
 // 'todo', 'in_progress', 'done'
-async function updateTask(startupId, taskId, title, description, status) {
+async function updateTask(
+  startupId,
+  taskId,
+  title,
+  description,
+  status,
+  assignedTo,
+) {
   const query = await db.query(
     `
     UPDATE tasks SET
       name = COALESCE($1, name),
       description = COALESCE($2, description),
-      status = COALESCE($3, status)
+      status = COALESCE($3, status),
+      assigned_to = COALESCE($6, assigned_to)
     WHERE 
       startup_id = $4 AND id = $5
-    RETURNING*;
+    RETURNING *;
     `,
-    [title, description, status, startupId, taskId],
+    [title, description, status, startupId, taskId, assignedTo],
   );
 
   return query.rows[0];

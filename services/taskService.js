@@ -116,6 +116,7 @@ async function updateTask(
   title,
   description,
   status,
+  assignedTo,
 ) {
   await requireStartup(startupId);
 
@@ -127,6 +128,7 @@ async function updateTask(
     title,
     description,
     status,
+    assignedTo,
   );
 
   return updatedTask;

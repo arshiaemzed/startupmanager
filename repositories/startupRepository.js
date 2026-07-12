@@ -31,20 +31,32 @@ async function createNewStartup(name, description, userId) {
 }
 
 async function getStartup(startupId) {
-  const memberQuery = await db.query(
-    "SELECT * FROM startup_users WHERE startup_id = $1;",
+  const memberResult = await db.query(
+    `
+    SELECT 
+      su.id,
+      su.startup_id,
+      u.name,
+      su.user_id,
+      su.role, 
+      su.joined_on 
+    FROM startup_users su
+    INNER JOIN users u
+    ON u.id = su.user_id
+    WHERE su.startup_id = $1;
+    `,
     [startupId],
   );
 
-  const tasksQuery = await db.query(
+  const taskResult = await db.query(
     "SELECT * FROM tasks WHERE startup_id = $1;",
     [startupId],
   );
 
   return {
     startup_id: startupId,
-    tasks: tasksQuery.rows,
-    members: memberQuery.rows,
+    tasks: taskResult.rows,
+    members: memberResult.rows,
   };
 }
 

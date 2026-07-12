@@ -1,0 +1,2 @@
+ALTER TABLE users 
+    ADD COLUMN name VARCHAR(25) NOT NULL DEFAULT 'Default name';

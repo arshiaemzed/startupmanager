@@ -10,12 +10,12 @@ const authRepository = require("../repositories/authRepository");
 const bcrypt = require("bcrypt");
 const errorCodes = require("../utils/errorCodes");
 
-async function registerUser(email, password) {
+async function registerUser(email, password, displayName) {
   const SALT_ROUNDS = 10;
 
   const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-  return await authRepository.createNewUser(email, hashedPassword);
+  return await authRepository.createNewUser(email, hashedPassword, displayName);
 }
 
 /**

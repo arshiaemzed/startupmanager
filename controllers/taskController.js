@@ -75,7 +75,7 @@ async function updateTask(req, res, next) {
   const taskId = req.params.id;
   const userId = req.user.id;
 
-  const { title, description, status } = req.body;
+  const { title, description, status, assigned_to } = req.body;
 
   const updatedTask = await taskService.updateTask(
     startupId,
@@ -84,6 +84,7 @@ async function updateTask(req, res, next) {
     title,
     description,
     status,
+    assigned_to,
   );
 
   return res.status(200).json(updatedTask);
