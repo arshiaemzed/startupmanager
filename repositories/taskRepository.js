@@ -51,11 +51,11 @@ async function doesTaskExists(startupId, taskId) {
 
 async function deleteSpecificTask(startupId, taskId) {
   const query = await db.query(
-    "DELETE FROM tasks WHERE startup_id = $1 AND id = $2 RETURNING id",
+    "DELETE FROM tasks WHERE startup_id = $1 AND id = $2 RETURNING id, name, description, startup_id, assigned_to, status, created_at, updated_at",
     [startupId, taskId],
   );
 
-  return query.rows;
+  return query.rows[0];
 }
 
 async function updateTaskAssignedUser(startupId, taskId, assignedUserId) {

@@ -20,7 +20,7 @@ async function getSpecificMember(startupId, userId) {
 
 async function updateUserRole(startupId, userId, role) {
   const query = await db.query(
-    "UPDATE startup_users SET role = $1 WHERE startup_id = $2 AND user_id = $3",
+    "UPDATE startup_users SET role = $1 WHERE startup_id = $2 AND user_id = $3 RETURNING user_id, startup_id, role",
     [role, startupId, userId],
   );
 

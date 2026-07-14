@@ -64,7 +64,7 @@ async function getUserStartups(userId) {
   const query = await db.query(
     `
       SELECT * FROM startups
-      LEFT JOIN startup_users ON startups.id = startup_users.startup_id AND startup_users.user_id = $1
+      JOIN startup_users ON startups.id = startup_users.startup_id AND startup_users.user_id = $1
     `,
     [userId],
   );
