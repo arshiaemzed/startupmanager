@@ -85,6 +85,14 @@ async function kickMember(startupId, userId, affectedUserId) {
     "Only owner's can kick members out of startup",
   );
 
+  if (userId == affectedUserId) {
+    throw new AppError(
+      403,
+      errorCodes.NO_PERMISSION,
+      "You cannot kick yourself.",
+    );
+  }
+
   const kickedMember = await memberManagmentRepository.kickMember(
     startupId,
     affectedUserId,
