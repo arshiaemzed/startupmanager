@@ -2,13 +2,15 @@ const errorCodes = require("../utils/errorCodes");
 const validateField = require("../utils/validateField");
 
 function signupMiddleware(req, res, next) {
-  const { email, password, name } = req.body;
+  const { email, password, name, userName } = req.body;
 
-  validateField(name, res, 400, "Please enter valid name");
+  validateField(name, res, "Please enter valid name");
 
-  validateField(email, res, 400, "Please enter an valid email");
+  validateField(email, res, "Please enter a valid email");
 
-  validateField(email, res, 400, "Please enter an valid password");
+  validateField(password, res, "Please enter a valid password");
+
+  validateField(userName, res, "Please enter a valid and unique username");
 
   if (name.length < 6) {
     return res.status(400).json({
@@ -30,7 +32,19 @@ function signupMiddleware(req, res, next) {
     });
   }
 
+  if (!validateUsername(userName)) {
+    return res.status(400).json({
+      success: false,
+      error: { message: "username can only contains numbers and characters" },
+    });
+  }
+
   next();
+}
+
+function validateUsername(userName) {
+  const usernameRegex = /^[a-zA-Z0-9_]+$/;
+  return usernameRegex.test(userName);
 }
 
 module.exports = signupMiddleware;

@@ -5,9 +5,9 @@ const { generateAccessToken } = require("../token_generate");
 const { user } = require("pg/lib/defaults");
 
 async function signup(req, res, next) {
-  const { email, password, name } = req.body;
+  const { email, password, name, userName } = req.body;
 
-  const user = await authService.registerUser(email, password, name);
+  const user = await authService.registerUser(email, password, name, userName);
 
   return res.status(201).json(user);
 }

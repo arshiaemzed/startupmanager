@@ -1,14 +1,19 @@
 const db = require("../database/db");
 
-async function createNewUser(email, password, displayName) {
+async function createNewUser(email, password, displayName, userName) {
   const query = await db.query(
     `
-        INSERT INTO users(email, password, name) VALUES ($1, $2, $3);    
+        INSERT INTO users(email, password, name, user_name) VALUES ($1, $2, $3, $4);    
     `,
-    [email, password, displayName],
+    [email, password, displayName, userName],
   );
 
-  return { name: displayName, email: email, password: password };
+  return {
+    name: displayName,
+    email: email,
+    password: password,
+    userName: userName,
+  };
 }
 
 async function isRefreshTokenValid(token) {

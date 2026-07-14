@@ -10,24 +10,29 @@ const authRepository = require("../repositories/authRepository");
 const bcrypt = require("bcrypt");
 const errorCodes = require("../utils/errorCodes");
 
-async function registerUser(email, password, displayName) {
+async function registerUser(email, password, displayName, userName) {
   const SALT_ROUNDS = 10;
 
   const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-  return await authRepository.createNewUser(email, hashedPassword, displayName);
+  const userExists = authRepository.findUser(email);
+
+  if (userExists) {
+    throw new AppError(
+      400,
+      errorCodes.USER_ALREADY_REGISTERED,
+      "User already registered.",
+    );
+  }
+
+  return await authRepository.createNewUser(
+    email,
+    hashedPassword,
+    displayName,
+    userName,
+  );
 }
 
-/**
- * verifies user email and password and generates JWT tokens for authentication
- * token types => access token and refresh token
- * access token is used for authentication
- * refresh token is used for regenerating access tokens
- *
- * @param {string} email
- * @param {string} password
- * @returns {Promise<accessToken: string, refreshToken: string>}
- */
 async function login(email, password) {
   const user = await authRepository.findUser(email);
 
@@ -60,15 +65,6 @@ async function login(email, password) {
   };
 }
 
-/**
- * Logs out a user by invalidating their refresh token
- *
- * This prevents further access to generating access tokens with the same refresh token
- *
- * @param {string} userId
- * @param {string} refreshToken
- * @returns {Promise<message: string>}
- */
 async function logout(refreshToken) {
   const exists = await authRepository.isRefreshTokenValid(refreshToken);
 
