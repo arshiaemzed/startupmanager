@@ -8,14 +8,9 @@ function createNewTaskMiddleware(req, res, next) {
 
   const { title, description } = req.body;
 
-  validateField(title, res, 400, "title field missing (Bad request)");
+  validateField(title, res, "title field missing (Bad request)");
 
-  validateField(
-    description,
-    res,
-    400,
-    "description field missing (Bad request)",
-  );
+  validateField(description, res, "description field missing (Bad request)");
 
   next();
 }
