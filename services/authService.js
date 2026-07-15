@@ -15,7 +15,7 @@ async function registerUser(email, password, displayName, userName) {
 
   const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-  const userExists = authRepository.findUser(email);
+  const userExists = await authRepository.findUser(email);
 
   if (userExists) {
     throw new AppError(
@@ -25,9 +25,9 @@ async function registerUser(email, password, displayName, userName) {
     );
   }
 
-  const isUserNameValid = authRepository.isUserNameTaken(userName);
+  const userNameTaken = await authRepository.isUserNameTaken(userName);
 
-  if (!isUserNameValid) {
+  if (userNameTaken) {
     throw new AppError(
       400,
       errorCodes.USER_NAME_TAKEN,
