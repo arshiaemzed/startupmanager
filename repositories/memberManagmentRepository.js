@@ -1,5 +1,20 @@
 const db = require("../database/db");
 
+async function searchUsersByNameOrDisplayName(value) {
+  const query = await db.query(
+    `
+      SELECT * FROM users
+      WHERE name ILIKE $1
+      OR user_name ILIKE $1;
+    `,
+    [`%${value}%`],
+  );
+
+  console.log(query.rows);
+
+  return query.rows;
+}
+
 async function getAllMembers(startupId) {
   const query = await db.query(
     "SELECT * FROM startup_users WHERE startup_id = $1",
@@ -58,4 +73,5 @@ module.exports = {
   getSpecificMember,
   updateUserRole,
   kickMember,
+  searchUsersByNameOrDisplayName,
 };

@@ -4,6 +4,7 @@ const {
   requireJoining,
   requirePermission,
 } = require("../guards/serviceGuard");
+const memeberManagmentMiddleware = require("../middlewares/memberManagmentMiddleware");
 
 const memberManagmentRepository = require("../repositories/memberManagmentRepository");
 const errorCodes = require("../utils/errorCodes");
@@ -23,6 +24,13 @@ async function getAllMembers(userId, startupId) {
   const members = await memberManagmentRepository.getAllMembers(startupId);
 
   return members;
+}
+
+async function searchUsersByNameOrDisplayName(value) {
+  const users =
+    await memberManagmentRepository.searchUsersByNameOrDisplayName(value);
+
+  return users;
 }
 
 async function getSpecificMember(startupId, userId, targetId) {
@@ -106,4 +114,5 @@ module.exports = {
   getSpecificMember,
   updateUserRole,
   kickMember,
+  searchUsersByNameOrDisplayName,
 };

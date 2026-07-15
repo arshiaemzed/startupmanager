@@ -10,6 +10,14 @@ async function getAllMembers(req, res, next) {
   return res.status(200).json(members);
 }
 
+async function searchUsersByNameOrDisplayName(req, res, next) {
+  const users = await memberManagmentService.searchUsersByNameOrDisplayName(
+    req.body.value,
+  );
+
+  return res.status(200).json(users);
+}
+
 async function getSpecificMember(req, res, next) {
   const userId = req.user.id;
 
@@ -65,4 +73,5 @@ module.exports = {
   updateMemberRole,
   kickMember,
   getSpecificMember,
+  searchUsersByNameOrDisplayName,
 };
