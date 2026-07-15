@@ -25,6 +25,16 @@ async function registerUser(email, password, displayName, userName) {
     );
   }
 
+  const isUserNameValid = authRepository.isUserNameTaken(userName);
+
+  if (!isUserNameValid) {
+    throw new AppError(
+      400,
+      errorCodes.USER_NAME_TAKEN,
+      "User name already taken.",
+    );
+  }
+
   return await authRepository.createNewUser(
     email,
     hashedPassword,

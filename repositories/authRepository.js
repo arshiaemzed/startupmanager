@@ -1,3 +1,4 @@
+const { database } = require("pg/lib/defaults");
 const db = require("../database/db");
 
 async function createNewUser(email, password, displayName, userName) {
@@ -14,6 +15,14 @@ async function createNewUser(email, password, displayName, userName) {
     password: password,
     userName: userName,
   };
+}
+
+async function isUserNameTaken(userName) {
+  const query = await db.query("SELECT * FROM users WHERE user_name = $1", [
+    userName,
+  ]);
+
+  return query.rowCount > 0;
 }
 
 async function isRefreshTokenValid(token) {
@@ -63,4 +72,5 @@ module.exports = {
   selectAllUsers,
   storeRefreshToken,
   deleteRefreshToken,
+  isUserNameTaken,
 };
