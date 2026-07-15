@@ -56,7 +56,7 @@ async function kickMember(req, res, next) {
     affectedUserId,
   );
 
-  return res.status(200).json();
+  return res.status(200).json(kickedMember);
 }
 
 module.exports = {

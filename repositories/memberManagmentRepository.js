@@ -29,11 +29,28 @@ async function updateUserRole(startupId, userId, role) {
 
 async function kickMember(startupId, userId) {
   const query = await db.query(
-    "DELETE FROM startup_users WHERE startup_id = $1 AND user_id = $2",
+    `
+      WITH deleted_member AS (
+        DELETE FROM startup_users
+        WHERE startup_id = $1 AND user_id = $2
+        RETURNING id, startup_id, user_id, role, joined_on
+      )
+      SELECT 
+        deleted_member.id,
+        deleted_member.startup_id,
+        deleted_member.user_id,
+        deleted_member.role,
+        deleted_member.joined_on,
+        users.name
+      FROM deleted_member
+        JOIN  users
+        ON users.id = deleted_member.user_id;
+    
+    `,
     [startupId, userId],
   );
 
-  return query.rows;
+  return query.rows[0];
 }
 
 module.exports = {
