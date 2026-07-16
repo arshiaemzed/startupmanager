@@ -6,14 +6,12 @@ const memberManagmentController = require("../controllers/memberManagmentControl
 const updateMemberRoleMiddleware = require("../middlewares/updateMemberRoleMiddleware");
 const kickMemberMiddleware = require("../middlewares/kickMemberMiddleware");
 const getSpecificMemberMiddleware = require("../middlewares/getSpecificMemberMiddleware");
-const searchUsersByNameOrDisplayNameMiddleware = require("../middlewares/searchUsersByNameOrDisplayNameMiddleware");
 
 const router = express.Router();
 
-router.post(
-  "/users/search",
+router.get(
+  "/users",
   verifyJWT,
-  searchUsersByNameOrDisplayNameMiddleware,
   asyncHandler(memberManagmentController.searchUsersByNameOrDisplayName),
 );
 

@@ -26,9 +26,12 @@ async function getAllMembers(userId, startupId) {
   return members;
 }
 
-async function searchUsersByNameOrDisplayName(value) {
-  const users =
-    await memberManagmentRepository.searchUsersByNameOrDisplayName(value);
+async function searchUsersByNameOrDisplayName(value, limit, offset) {
+  const users = await memberManagmentRepository.searchUsersByNameOrDisplayName(
+    value,
+    limit,
+    offset,
+  );
 
   return users;
 }

@@ -11,8 +11,16 @@ async function getAllMembers(req, res, next) {
 }
 
 async function searchUsersByNameOrDisplayName(req, res, next) {
+  const limit = Number(req.query.limit) || 20;
+  const page = Number(req.query.page) || 1;
+  const q = req.query.q ?? "";
+
+  const offset = (page - 1) * limit;
+
   const users = await memberManagmentService.searchUsersByNameOrDisplayName(
-    req.body.value,
+    q,
+    limit,
+    offset,
   );
 
   return res.status(200).json(users);

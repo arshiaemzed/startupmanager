@@ -1,16 +1,17 @@
 const db = require("../database/db");
 
-async function searchUsersByNameOrDisplayName(value) {
+async function searchUsersByNameOrDisplayName(value, limit, offset) {
   const query = await db.query(
     `
-      SELECT * FROM users
+      SELECT users.id, users.name, users.user_name FROM users
       WHERE name ILIKE $1
-      OR user_name ILIKE $1;
+      OR user_name ILIKE $1
+      ORDER BY user_name ASC
+      LIMIT  $2
+      OFFSET $3;
     `,
-    [`%${value}%`],
+    [`%${value}%`, limit, offset],
   );
-
-  console.log(query.rows);
 
   return query.rows;
 }
