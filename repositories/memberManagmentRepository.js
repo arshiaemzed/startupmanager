@@ -43,6 +43,31 @@ async function updateUserRole(startupId, userId, role) {
   return query.rows;
 }
 
+async function userAlreadyInvited(startupId, memberId) {
+  const query = await db.query(
+    `
+    SELECT * FROM invites
+    WHERE startup_id = $1 AND user_id = $2 AND status = $3
+    `,
+    [startupId, memberId, "pending"],
+  );
+
+  return query.rowCount > 0;
+}
+
+async function inviteUserToStartup(startupId, userId, memberId) {
+  const query = await db.query(
+    `
+      INSERT INTO invites 
+      (startup_id, invited_by, user_id)
+      VALUES ($1, $2, $3);
+    `,
+    [startupId, userId, memberId],
+  );
+
+  return query.rows[0];
+}
+
 async function kickMember(startupId, userId) {
   const query = await db.query(
     `
@@ -75,4 +100,6 @@ module.exports = {
   updateUserRole,
   kickMember,
   searchUsersByNameOrDisplayName,
+  inviteUserToStartup,
+  userAlreadyInvited,
 };

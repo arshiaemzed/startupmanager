@@ -36,6 +36,35 @@ async function searchUsersByNameOrDisplayName(value, limit, offset) {
   return users;
 }
 
+async function inviteUserToStartup(startupId, userId, memberId) {
+  await requireStartup(startupId);
+
+  await requireJoining(startupId, userId);
+
+  await requirePermission(startupId, userId, ["owner"]);
+
+  const alreadyInvited = await memberManagmentRepository.userAlreadyInvited(
+    startupId,
+    memberId,
+  );
+
+  if (alreadyInvited) {
+    throw new AppError(
+      409,
+      errorCodes.USER_ALREADY_INVITED_TO_STARTUP,
+      "User is already invited to the startup.",
+    );
+  }
+
+  const invitedUser = await memberManagmentRepository.inviteUserToStartup(
+    startupId,
+    userId,
+    memberId,
+  );
+
+  return invitedUser;
+}
+
 async function getSpecificMember(startupId, userId, targetId) {
   requireStartup(startupId);
 
@@ -118,4 +147,5 @@ module.exports = {
   updateUserRole,
   kickMember,
   searchUsersByNameOrDisplayName,
+  inviteUserToStartup,
 };

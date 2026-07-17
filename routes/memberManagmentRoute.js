@@ -6,6 +6,7 @@ const memberManagmentController = require("../controllers/memberManagmentControl
 const updateMemberRoleMiddleware = require("../middlewares/updateMemberRoleMiddleware");
 const kickMemberMiddleware = require("../middlewares/kickMemberMiddleware");
 const getSpecificMemberMiddleware = require("../middlewares/getSpecificMemberMiddleware");
+const inviteUserToStartupMiddleware = require("../middlewares/inviteUserToStartupMiddleware");
 
 const router = express.Router();
 
@@ -13,6 +14,13 @@ router.get(
   "/users",
   verifyJWT,
   asyncHandler(memberManagmentController.searchUsersByNameOrDisplayName),
+);
+
+router.post(
+  "/startup/:startupid/users/:id/invite",
+  verifyJWT,
+  inviteUserToStartupMiddleware,
+  asyncHandler(memberManagmentController.inviteUserToStartup),
 );
 
 router.get(
@@ -26,21 +34,21 @@ router.get(
   "/startup/:id/members/:memberid",
   verifyJWT,
   getSpecificMemberMiddleware,
-  memberManagmentController.getSpecificMember,
+  asyncHandler(memberManagmentController.getSpecificMember),
 );
 
 router.patch(
   "/startup/:id/members/:memberid/role",
   verifyJWT,
   updateMemberRoleMiddleware,
-  memberManagmentController.updateMemberRole,
+  asyncHandler(memberManagmentController.updateMemberRole),
 );
 
 router.delete(
   "/startup/:id/members/:memberid/kick",
   verifyJWT,
   kickMemberMiddleware,
-  memberManagmentController.kickMember,
+  asyncHandler(memberManagmentController.kickMember),
 );
 
 module.exports = router;
