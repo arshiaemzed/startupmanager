@@ -6,7 +6,6 @@ const memberManagmentController = require("../controllers/memberManagmentControl
 const updateMemberRoleMiddleware = require("../middlewares/updateMemberRoleMiddleware");
 const kickMemberMiddleware = require("../middlewares/kickMemberMiddleware");
 const getSpecificMemberMiddleware = require("../middlewares/getSpecificMemberMiddleware");
-const inviteUserToStartupMiddleware = require("../middlewares/inviteUserToStartupMiddleware");
 
 const router = express.Router();
 
@@ -14,13 +13,6 @@ router.get(
   "/users",
   verifyJWT,
   asyncHandler(memberManagmentController.searchUsersByNameOrDisplayName),
-);
-
-router.post(
-  "/startup/:startupid/users/:id/invite",
-  verifyJWT,
-  inviteUserToStartupMiddleware,
-  asyncHandler(memberManagmentController.inviteUserToStartup),
 );
 
 router.get(

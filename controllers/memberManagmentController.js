@@ -10,22 +10,6 @@ async function getAllMembers(req, res, next) {
   return res.status(200).json(members);
 }
 
-async function inviteUserToStartup(req, res, next) {
-  const userId = req.user.id;
-
-  const memberId = req.params.id;
-
-  const startupId = req.params.startupid;
-
-  const invitedUser = await memberManagmentService.inviteUserToStartup(
-    startupId,
-    userId,
-    memberId,
-  );
-
-  return res.status(200).json(invitedUser);
-}
-
 async function searchUsersByNameOrDisplayName(req, res, next) {
   const limit = Number(req.query.limit) || 20;
   const page = Number(req.query.page) || 1;
@@ -98,5 +82,4 @@ module.exports = {
   kickMember,
   getSpecificMember,
   searchUsersByNameOrDisplayName,
-  inviteUserToStartup,
 };
