@@ -1,7 +1,7 @@
 const request = require("supertest");
 const app = require("../../app");
 const db = require("../../database/db");
-const { user } = require("pg/lib/defaults");
+const cleanDatabase = require("../helpers/cleanDatabase");
 
 describe("POST /auth/register", () => {
   test("should register a new user", async () => {
@@ -16,18 +16,19 @@ describe("POST /auth/register", () => {
 
     expect(response.status).toBe(201);
 
+    expect(response.body).toHaveProperty("name");
+    expect(response.body).toHaveProperty("email");
+    expect(response.body).toHaveProperty("password");
+    expect(response.body).toHaveProperty("userName");
+
     const result = await db.query("SELECT * FROM users WHERE email = $1", [
       newUser.email,
     ]);
 
     expect(result.rows).toHaveLength(1);
   });
-});
 
-beforeEach(async () => {
-  await db.query("TRUNCATE TABLE users CASCADE");
-});
-
-afterAll(async () => {
-  await db.end();
+  beforeEach(async () => {
+    await cleanDatabase();
+  });
 });

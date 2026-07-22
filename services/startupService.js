@@ -57,7 +57,12 @@ async function getStartup(startupId, userId) {
 async function deleteStartup(startupId, userId) {
   await requireStartup(startupId);
   await requireJoining(startupId, userId);
-  await requirePermission(startupId, userId, ["owner"]);
+  await requirePermission(
+    startupId,
+    userId,
+    ["owner"],
+    "Only owner's can delete startups.",
+  );
 
   const deletedStartup = await startupRepository.deleteStartup(startupId);
 

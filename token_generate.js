@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
 
 // added 7 day for debugging so i dont have to keep changing my tokens
 // change to 15 minutes before production **IMPORTANT**

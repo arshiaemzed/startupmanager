@@ -1,0 +1,31 @@
+const { createTestUser, createAccessToken } = require("./auth");
+const { createTestStartup } = require("./startup");
+
+async function createStartupWithoutMember() {
+  const newUser = {
+    email: "samira.cfx@gmail.com",
+    password: "samira1234",
+    name: "Samira ali",
+    userName: "samira12",
+  };
+
+  const user = await createTestUser(newUser);
+
+  const token = await createAccessToken(user.id);
+
+  const newStartup = {
+    name: "test",
+    description: "test description",
+    owner: user.id,
+  };
+
+  const startup = await createTestStartup(
+    newStartup.name,
+    newStartup.description,
+    newStartup.owner,
+  );
+
+  return { startupData: startup, userToken: token };
+}
+
+module.exports = createStartupWithoutMember;
