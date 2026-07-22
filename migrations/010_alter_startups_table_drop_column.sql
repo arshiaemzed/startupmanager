@@ -1,0 +1,2 @@
+ALTER TABLE startups
+DROP COLUMN owner;

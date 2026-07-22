@@ -6,8 +6,8 @@ async function createNewStartup(name, description, userId) {
     await client.query("BEGIN;");
 
     const startupQuery = await client.query(
-      "INSERT INTO startups (owner, name, description) VALUES ($1, $2, $3) RETURNING id",
-      [userId, name, description],
+      "INSERT INTO startups (name, description) VALUES ($1, $2) RETURNING id",
+      [name, description],
     );
 
     await client.query(
