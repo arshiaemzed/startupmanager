@@ -16,11 +16,11 @@ async function createTestStartup() {
     const startupQuery = await client.query(
       `
         INSERT INTO startups 
-        (owner, name, description)
-        VALUES($1, $2, $3)
+        (name, description)
+        VALUES($1, $2)
         RETURNING *;
     `,
-      [user.id, "test startup", "test"],
+      ["test startup", "test"],
     );
 
     const userQuery = await client.query(

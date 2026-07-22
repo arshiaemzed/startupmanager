@@ -1,14 +1,14 @@
 const db = require("../../database/db");
 
-async function createTestStartup(name, description, owner) {
+async function createTestStartup(name, description) {
   const query = await db.query(
     `
         INSERT INTO startups 
-        (name, description, owner)
-        VALUES($1, $2, $3)
+        (name, description)
+        VALUES($1, $2)
         RETURNING *;
     `,
-    [name, description, owner],
+    [name, description],
   );
 
   return query.rows[0];

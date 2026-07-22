@@ -19,13 +19,11 @@ async function createJoinedStartup() {
   const newStartup = {
     name: "test",
     description: "test startup",
-    owner: user.id,
   };
 
   const startup = await createTestStartup(
     newStartup.name,
     newStartup.description,
-    newStartup.owner,
   );
 
   const response = await request(app)

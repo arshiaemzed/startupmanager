@@ -16,13 +16,11 @@ async function createStartupWithoutMember() {
   const newStartup = {
     name: "test",
     description: "test description",
-    owner: user.id,
   };
 
   const startup = await createTestStartup(
     newStartup.name,
     newStartup.description,
-    newStartup.owner,
   );
 
   return { startupData: startup, userToken: token };
