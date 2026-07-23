@@ -1,8 +1,11 @@
 const db = require("../../database/db");
 const request = require("supertest");
 const app = require("../../app");
+const uuid = require("uuid");
 const cleanDatabase = require("../helpers/cleanDatabase");
 const { createJoinedStartup } = require("../helpers/createdJoinedStartup");
+const createStartupWithoutMember = require("../helpers/createStartupWithoutMember");
+const { createTestUser, createAccessToken } = require("../helpers/auth");
 
 describe("POST /startup/join/:id", () => {
   test("should join startup", async () => {
@@ -19,7 +22,7 @@ describe("POST /startup/join/:id", () => {
     expect(startup.response.status).toBe(200);
   });
 
-  test("should join startup", async () => {
+  test("should not allow the user to join startup that they are already joined in.", async () => {
     const startup = await createJoinedStartup();
 
     expect(startup.response.status).toBe(200);
@@ -45,6 +48,18 @@ describe("POST /startup/join/:id", () => {
     expect(response.body["error"]["message"]).toBe(
       "You already joined the startup",
     );
+  });
+
+  test("should disallow user trying to join a startup that doesnt exist.", async () => {
+    const user = await createTestUser();
+
+    const token = await createAccessToken(user.id);
+
+    const response = await request(app)
+      .post(`/startup/join/randomid`)
+      .set("Authorization", `Bearer ${token}`);
+
+    console.log(response.body);
   });
 
   beforeEach(async () => {

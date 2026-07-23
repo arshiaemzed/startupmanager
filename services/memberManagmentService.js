@@ -98,7 +98,7 @@ async function updateUserRole(startupId, userId, affectedUserId, role) {
     throw new AppError(
       400,
       errorCodes.CANNOT_KICK_YOURSELF,
-      "You cannot kick yourself",
+      "You change your own role",
     );
   }
 
