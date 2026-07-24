@@ -4,9 +4,9 @@ function createStartupMiddleware(req, res, next) {
   const name = req.body.name;
   const description = req.body.description;
 
-  validateField(name, "name field missing (Bad request)");
+  validateField(name, "Invalid name field(Bad Request)");
 
-  validateField(description, "description field missing (Bad request)");
+  validateField(description, "Invalid description field(Bad Request)");
 
   next();
 }
