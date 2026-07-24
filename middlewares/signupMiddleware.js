@@ -2,15 +2,25 @@ const errorCodes = require("../utils/errorCodes");
 const validateField = require("../utils/validateField");
 
 function signupMiddleware(req, res, next) {
+  if (!req.body) {
+    return res.status(400).json({
+      success: false,
+      error: {
+        code: errorCodes.INVALID_REQUEST_BODY,
+        message: "Invalid request body.",
+      },
+    });
+  }
+
   const { email, password, name, userName } = req.body;
 
-  validateField(name, res, "Please enter valid name");
+  validateField(name, "Please enter valid name");
 
-  validateField(email, res, "Please enter a valid email");
+  validateField(email, "Please enter a valid email");
 
-  validateField(password, res, "Please enter a valid password");
+  validateField(password, "Please enter a valid password");
 
-  validateField(userName, res, "Please enter a valid and unique username");
+  validateField(userName, "Please enter a valid and unique username");
 
   if (name.length < 6) {
     return res.status(400).json({

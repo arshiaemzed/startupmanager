@@ -4,11 +4,11 @@ const validateParam = require("../utils/validateParam");
 function updateMemberRoleMiddleware(req, res, next) {
   const startupId = req.params.id;
 
-  validateParam(startupId, res, 400, "id param missing (Bad request)");
+  validateParam(startupId, "id param missing (Bad request)");
 
   const memberId = req.params.memberid;
 
-  validateParam(memberId, res, 400, "memberid param missing (Bad request)");
+  validateParam(memberId, "memberid param missing (Bad request)");
 
   const newRole = req.body.role;
 

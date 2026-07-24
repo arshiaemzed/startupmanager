@@ -5,9 +5,9 @@ function getSpecificMemberMiddleware(req, res, next) {
 
   const memberId = req.params.memberid;
 
-  validateParam(id, res, 400, "id param missing (Bad request)");
+  validateParam(id, "id param missing (Bad request)");
 
-  validateParam(memberId, res, 400, "memberid param missing (Bad request)");
+  validateParam(memberId, "memberid param missing (Bad request)");
 
   next();
 }

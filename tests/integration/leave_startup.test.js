@@ -6,6 +6,8 @@ const { createTestUser, createAccessToken } = require("../helpers/auth");
 const { createTestStartup } = require("../helpers/startup");
 const createStartupWithoutMember = require("../helpers/createStartupWithoutMember");
 const { createJoinedStartup } = require("../helpers/createdJoinedStartup");
+const uuid = require("uuid");
+const expectError = require("../helpers/expectError");
 
 describe("POST /startup/leave/:id", () => {
   test("Should allow a user to leave startup if joined", async () => {
@@ -40,16 +42,65 @@ describe("POST /startup/leave/:id", () => {
       .post(`/startup/leave/${startup.startupData.id}`)
       .set("Authorization", `Bearer ${startup.userToken}`);
 
-    expect(response.status).toBe(403);
+    expectError(response, {
+      status: 403,
+      code: "NOT_JOINED_IN_STARTUP",
+      message: "You are not joined in the startup",
+    });
+  });
 
-    expect(response.body).toHaveProperty("success");
-    expect(response.body).toHaveProperty("error");
-    expect(response.body["error"]).toHaveProperty("message");
-    expect(response.body["error"]).toHaveProperty("code");
-    expect(response.body["error"]["code"]).toBe("NOT_JOINED_IN_STARTUP");
-    expect(response.body["error"]["message"]).toBe(
-      "You are not joined in the startup",
-    );
+  test("Should disallow a user trying to leave a startup that has invalid id param input", async () => {
+    const user = await createTestUser();
+
+    const token = await createAccessToken(user.id);
+
+    const response = await request(app)
+      .post("/startup/leave/randomali")
+      .set("Authorization", `Bearer ${token}`);
+
+    expectError(response, {
+      status: 400,
+      code: "INVALID_PARAMETER",
+      message: "invalid input for id param.",
+    });
+  });
+
+  test("Should disallow a user trying to leave a startup that doesnt exist", async () => {
+    const user = await createTestUser();
+
+    const token = await createAccessToken(user.id);
+
+    const id = uuid.v4();
+
+    const response = await request(app)
+      .post(`/startup/leave/${id}`)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(response.status).toBe(404);
+  });
+
+  test("Should disallow a user to use leave endpoint if provided with no authorization", async () => {
+    const id = uuid.v4();
+    const response = await request(app).post(`/startup/leave/${id}`);
+
+    expectError(response, {
+      status: 401,
+      code: "NO_AUTHORIZATION",
+      message: "No authorization",
+    });
+  });
+
+  test("Should disallow a user to use leave endpoint if provided with invalid/expired token", async () => {
+    const id = uuid.v4();
+    const response = await request(app)
+      .post(`/startup/leave/${id}`)
+      .set("Authorization", `Bearer ${id}`);
+
+    expectError(response, {
+      status: 401,
+      code: "INVALID_OR_EXPIRED_ACCESS_TOKEN",
+      message: "Invalid or expired access token",
+    });
   });
 
   beforeEach(async () => {

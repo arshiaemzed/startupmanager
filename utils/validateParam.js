@@ -1,11 +1,9 @@
+const AppError = require("../customErrors");
 const errorCodes = require("./errorCodes");
 
-function validateParam(param, res, statusCode, errorMessage) {
+function validateParam(param, errorMessage) {
   if (!param) {
-    return res.status(statusCode).json({
-      success: false,
-      error: { message: errorMessage, code: errorCodes.INVALID_PARAMETER },
-    });
+    throw new AppError(400, errorCodes.INVALID_PARAMETER, errorMessage);
   }
 }
 

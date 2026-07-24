@@ -6,6 +6,8 @@ const { createJoinedStartup } = require("../helpers/createdJoinedStartup");
 const createTestStartup = require("../helpers/createTestStartup");
 const { createTestUser, createAccessToken } = require("../helpers/auth");
 const createStartupWithoutMember = require("../helpers/createStartupWithoutMember");
+const expectError = require("../helpers/expectError");
+const uuid = require("uuid");
 
 describe("DELETE /startup/:id", () => {
   test("should be able to delete startup", async () => {
@@ -27,16 +29,11 @@ describe("DELETE /startup/:id", () => {
       .delete(`/startup/${startup.startup.id}`)
       .set("Authorization", `Bearer ${startup.token}`);
 
-    expect(response.status).toBe(403);
-
-    expect(response.body).toHaveProperty("success");
-    expect(response.body).toHaveProperty("error");
-    expect(response.body["error"]).toHaveProperty("message");
-    expect(response.body["error"]).toHaveProperty("code");
-    expect(response.body["error"]["message"]).toBe(
-      "Only owner's can delete startups.",
-    );
-    expect(response.body["error"]["code"]).toBe("NO_PERMISSION");
+    expectError(response, {
+      status: 403,
+      code: "NO_PERMISSION",
+      message: "Only owner's can delete startups.",
+    });
   });
 
   test("should not be able to delete startup if not joined", async () => {
@@ -50,16 +47,35 @@ describe("DELETE /startup/:id", () => {
       .delete(`/startup/${startup.startupData.id}`)
       .set("Authorization", `Bearer ${token}`);
 
-    expect(response.status).toBe(403);
-    expect(response.body).toHaveProperty("success");
-    expect(response.body).toHaveProperty("error");
-    expect(response.body["error"]).toHaveProperty("message");
-    expect(response.body["error"]).toHaveProperty("code");
-    expect(response.body["success"]).toBe(false);
-    expect(response.body["error"]["message"]).toBe(
-      "You are not joined in the startup",
-    );
-    expect(response.body["error"]["code"]).toBe("NOT_JOINED_IN_STARTUP");
+    expectError(response, {
+      status: 403,
+      code: "NOT_JOINED_IN_STARTUP",
+      message: "You are not joined in the startup",
+    });
+  });
+
+  test("Should disallow a user to use delete endpoint if provided with no authorization", async () => {
+    const id = uuid.v4();
+    const response = await request(app).delete(`/startup/${id}`);
+
+    expectError(response, {
+      status: 401,
+      code: "NO_AUTHORIZATION",
+      message: "No authorization",
+    });
+  });
+
+  test("Should disallow a user to use delete endpoint if provided with invalid/expired token", async () => {
+    const id = uuid.v4();
+    const response = await request(app)
+      .delete(`/startup/${id}`)
+      .set("Authorization", `Bearer ${id}`);
+
+    expectError(response, {
+      status: 401,
+      code: "INVALID_OR_EXPIRED_ACCESS_TOKEN",
+      message: "Invalid or expired access token",
+    });
   });
 
   beforeEach(async () => {

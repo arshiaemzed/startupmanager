@@ -3,21 +3,13 @@ const errorCodes = require("../utils/errorCodes");
 
 function verifyJWT(req, res, next) {
   const header = req.headers;
-
-  if (!header) {
-    return res.status(400).json({
-      success: false,
-      error: { message: "No header (Bad request)", code: errorCodes.NO_HEADER },
-    });
-  }
-
   const authorization = header.authorization;
 
   if (!authorization) {
-    return res.status(400).json({
+    return res.status(401).json({
       success: false,
       error: {
-        message: "No authorization (Bad request)",
+        message: "No authorization",
         code: errorCodes.NO_AUTHORIZATION,
       },
     });
@@ -26,10 +18,10 @@ function verifyJWT(req, res, next) {
   const token = authorization.split(" ")[1];
 
   if (!token) {
-    return res.status(400).json({
+    return res.status(401).json({
       success: false,
       error: {
-        message: "No token (Bad request)",
+        message: "No token",
         code: errorCodes.NO_ACCESS_TOKEN,
       },
     });
@@ -44,7 +36,7 @@ function verifyJWT(req, res, next) {
       success: false,
       error: {
         message: "Invalid or expired access token",
-        code: errorCodes.INVALID_OR_EXIPRED_ACCESS_TOKEN,
+        code: errorCodes.INVALID_OR_EXPIRED_ACCESS_TOKEN,
       },
     });
   }

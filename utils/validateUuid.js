@@ -1,16 +1,11 @@
 const { validate } = require("uuid");
 const errorCodes = require("./errorCodes");
+const AppError = require("../customErrors");
 
 function validateUUID(input, res, errorMessage) {
   const isValid = validate(input);
   if (!isValid) {
-    return res.status(400).json({
-      success: false,
-      error: {
-        message: errorMessage,
-        code: errorCodes.INVALID_PARAMETER,
-      },
-    });
+    throw new AppError(400, errorCodes.INVALID_PARAMETER, errorMessage);
   }
 }
 

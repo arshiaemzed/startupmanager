@@ -4,9 +4,10 @@ const db = require("../../database/db");
 const bcrypt = require("bcrypt");
 const { createTestUser } = require("../helpers/auth");
 const cleanDatabase = require("../helpers/cleanDatabase");
+const expectError = require("../helpers/expectError");
 
 describe("POST /auth/login", () => {
-  test("should login and return accesstoken + refresh token", async () => {
+  test("should allow user login if given valid credentials.", async () => {
     const user = await createTestUser({
       email: "nein@gmail.com",
       password: "nein1234",
@@ -25,7 +26,7 @@ describe("POST /auth/login", () => {
     expect(typeof response.body["refresh_token"]).toBe("string");
   });
 
-  test("should return an error object if given invalid credentials.", async () => {
+  test("should disallow user to login if given invalid credentials.", async () => {
     const invalidUser = {
       email: "invalid@gmail.com",
       password: "invalid1234",
@@ -33,19 +34,45 @@ describe("POST /auth/login", () => {
 
     const response = await request(app).post("/auth/login").send(invalidUser);
 
-    expect(response.status).toBe(401);
+    expectError(response, {
+      status: 401,
+      code: "INVALID_CREDENTIALS",
+      message: "Invalid credentials.",
+    });
+  });
 
-    expect(response.body).toHaveProperty("success");
+  test("Should disallow user to login if given invalid fields for email or password(no email or password field)", async () => {
+    const response = await request(app).post("/auth/login").send({});
 
-    expect(response.body).toHaveProperty("error");
+    expectError(response, {
+      status: 400,
+      code: "INVALID_FIELD",
+      message: "Invalid credentials",
+    });
+  });
 
-    expect(response.body["error"]).toHaveProperty("message");
+  test("Should disallow user to login if given invalid fields for email or password(integer email)", async () => {
+    const response = await request(app)
+      .post("/auth/login")
+      .send({ email: 123213123, password: "11eweowe" });
 
-    expect(response.body["error"]).toHaveProperty("code");
+    expectError(response, {
+      status: 400,
+      code: "INVALID_FIELD",
+      message: "Invalid credentials",
+    });
+  });
 
-    expect(response.body["success"]).toBe(false);
+  test("Should disallow user to login if given invalid fields for email or password(empty string for email and password)", async () => {
+    const response = await request(app)
+      .post("/auth/login")
+      .send({ email: "", password: "" });
 
-    expect(response.body["error"]["code"]).toBe("INVALID_CREDENTIALS");
+    expectError(response, {
+      status: 400,
+      code: "INVALID_FIELD",
+      message: "Invalid credentials",
+    });
   });
 
   beforeEach(async () => {

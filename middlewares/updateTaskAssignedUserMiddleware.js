@@ -8,11 +8,11 @@ function updateTaskAssignedUserMiddleware(req, res, next) {
 
   const assignedId = req.body.assignedId;
 
-  validateParam(startupId, res, "startupid param missing (Bad request)");
+  validateParam(startupId, "startupid param missing (Bad request)");
 
-  validateParam(taskId, res, "id param missing (Bad request)");
+  validateParam(taskId, "id param missing (Bad request)");
 
-  validateField(assignedId, res, "Invalid id for assigned user");
+  validateField(assignedId, "Invalid id for assigned user");
 
   next();
 }

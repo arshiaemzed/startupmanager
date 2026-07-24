@@ -3,7 +3,7 @@ const validateParam = require("../utils/validateParam");
 function getStartupMiddleware(req, res, next) {
   const startupId = req.params.id;
 
-  validateParam(startupId, res, 400, "id param missing (Bad request)");
+  validateParam(startupId, "id param missing (Bad request)");
 
   next();
 }

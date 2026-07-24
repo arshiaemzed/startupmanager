@@ -4,9 +4,9 @@ function getSingleTaskMiddleware(req, res, next) {
   const startupId = req.params.startupid;
   const taskId = req.params.id;
 
-  validateParam(startupId, res, 400, "startupid param missing (Bad request)");
+  validateParam(startupId, "startupid param missing (Bad request)");
 
-  validateParam(taskId, res, 400, "id param missing (Bad request)");
+  validateParam(taskId, "id param missing (Bad request)");
 
   next();
 }

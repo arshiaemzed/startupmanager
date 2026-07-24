@@ -2,8 +2,9 @@ const request = require("supertest");
 const app = require("../../app");
 const db = require("../../database/db");
 const cleanDatabase = require("../helpers/cleanDatabase");
+const expectError = require("../helpers/expectError");
 
-describe("POST /auth/register", () => {
+describe("POST /auth/signup", () => {
   test("should register a new user", async () => {
     const newUser = {
       email: "emzedali@gmail.com",
@@ -26,6 +27,66 @@ describe("POST /auth/register", () => {
     ]);
 
     expect(result.rows).toHaveLength(1);
+  });
+
+  test("should disallow user to register if given invalid fields.", async () => {
+    const response = await request(app).post("/auth/signup").send();
+
+    expectError(response, {
+      status: 400,
+      code: "INVALID_REQUEST_BODY",
+      message: "Invalid request body.",
+    });
+  });
+
+  test("should disallow user to register if given wrong type for email field", async () => {
+    const user = {
+      name: "arshia pashmak",
+      userName: "pashmak",
+      email: 1231313,
+      password: "1234123",
+    };
+
+    const response = await request(app).post("/auth/signup").send(user);
+
+    expectError(response, {
+      status: 400,
+      code: "INVALID_FIELD",
+      message: "Please enter a valid email",
+    });
+  });
+
+  test("should disallow user to register if given empty string for email field", async () => {
+    const user = {
+      name: "arshia pashmak",
+      userName: "pashmak",
+      email: "",
+      password: "1234123",
+    };
+
+    const response = await request(app).post("/auth/signup").send(user);
+
+    expectError(response, {
+      status: 400,
+      code: "INVALID_FIELD",
+      message: "Please enter a valid email",
+    });
+  });
+
+  test("should disallow user to register if no field for email field", async () => {
+    const user = {
+      name: "arshia pashmak",
+      userName: "pashmak",
+      password: "1234123",
+    };
+
+    const response = await request(app).post("/auth/signup").send(user);
+
+    expectError(response, {
+      status: 400,
+      code: "INVALID_FIELD",
+      message: "Please enter a valid email",
+    });
   });
 
   beforeEach(async () => {

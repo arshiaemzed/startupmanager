@@ -1,11 +1,9 @@
+const AppError = require("../customErrors");
 const errorCodes = require("./errorCodes");
 
-function validateField(field, res, errorMessage) {
+function validateField(field, errorMessage) {
   if (!field || typeof field != "string" || field.trim() === "") {
-    return res.status(400).json({
-      success: false,
-      error: { message: errorMessage, code: errorCodes.INVALID_FIELD },
-    });
+    throw new AppError(400, errorCodes.INVALID_FIELD, errorMessage);
   }
 }
 

@@ -6,7 +6,7 @@ function membershipMiddleware(req, res, next) {
 
   validateUUID(id, res, "invalid input for id param.");
 
-  validateParam(id, res, 400, "id param missing (Bad request)");
+  validateParam(id, "id param missing (Bad request)");
 
   next();
 }
