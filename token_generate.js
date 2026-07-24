@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 // change to 15 minutes before production **IMPORTANT**
 function generateAccessToken(user) {
   return jwt.sign(
-    { id: user.id, email: user.email, password: user.password },
+    { id: user.id, email: user.email },
     process.env.JWT_ACCESS_TOKEN_SECRET,
     { expiresIn: "7d" },
   );
@@ -12,7 +12,7 @@ function generateAccessToken(user) {
 
 function genereateRefreshToken(user) {
   return jwt.sign(
-    { id: user.id, email: user.email, password: user.password },
+    { id: user.id, email: user.email },
     process.env.JWT_REFRESH_TOKEN_SECRET,
     {
       expiresIn: "7d",
