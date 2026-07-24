@@ -39,7 +39,25 @@ async function createAccessToken(id) {
   return token;
 }
 
+async function createRefreshToken(user) {
+  const token = jwt.sign(
+    { id: user.id, email: user.email },
+    process.env.JWT_REFRESH_TOKEN_SECRET,
+    {
+      expiresIn: "7d",
+    },
+  );
+
+  await db.query(
+    "INSERT INTO user_refresh_tokens (user_id, token, expires_at) VALUES($1, $2, NOW() + INTERVAL '7 days')",
+    [user.id, token],
+  );
+
+  return token;
+}
+
 module.exports = {
   createTestUser,
   createAccessToken,
+  createRefreshToken,
 };
