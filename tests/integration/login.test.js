@@ -70,10 +70,19 @@ describe("POST /auth/login", () => {
     });
   });
 
-  test("Should disallow user to login if given empty string for email ", async () => {
+  const validLoginInfo = {
+    email: "test@gmail.com",
+    password: "test1234",
+  };
+
+  test.each([
+    { case: "email is empty string", overrides: { email: "" } },
+    { case: "email is wrong type", overrides: { email: 12313123 } },
+    { case: "email is invalid", overrides: { email: undefined } },
+  ])("shouldnt allow user to login if $case", async ({ overrides }) => {
     const response = await request(app)
       .post("/auth/login")
-      .send({ email: "", password: "test1234" });
+      .send({ ...validLoginInfo, ...overrides });
 
     expectError(response, {
       status: 400,
@@ -82,58 +91,14 @@ describe("POST /auth/login", () => {
     });
   });
 
-  test("Should disallow user to login if not  given email ", async () => {
+  test.each([
+    { case: "password is empty string", overrides: { password: "" } },
+    { case: "password is wrong type", overrides: { password: 12313123 } },
+    { case: "password is invalid", overrides: { password: undefined } },
+  ])("shouldnt allow user to login if $case", async ({ overrides }) => {
     const response = await request(app)
       .post("/auth/login")
-      .send({ password: "test1234" });
-
-    expectError(response, {
-      status: 400,
-      code: "INVALID_FIELD",
-      message: "Invalid credentials",
-    });
-  });
-
-  test("Should disallow user to login if given invalid type for email.", async () => {
-    const response = await request(app)
-      .post("/auth/login")
-      .send({ email: 123213123, password: "test1234" });
-
-    expectError(response, {
-      status: 400,
-      code: "INVALID_FIELD",
-      message: "Invalid credentials",
-    });
-  });
-
-  test("Should disallow user to login if given empty string for password", async () => {
-    const response = await request(app)
-      .post("/auth/login")
-      .send({ email: "test@gmail.com", password: "" });
-
-    expectError(response, {
-      status: 400,
-      code: "INVALID_FIELD",
-      message: "Invalid credentials",
-    });
-  });
-
-  test("Should disallow user to login if not given password", async () => {
-    const response = await request(app)
-      .post("/auth/login")
-      .send({ email: "test@gmail.com" });
-
-    expectError(response, {
-      status: 400,
-      code: "INVALID_FIELD",
-      message: "Invalid credentials",
-    });
-  });
-
-  test("Should disallow user to login if given wrong type for password", async () => {
-    const response = await request(app)
-      .post("/auth/login")
-      .send({ email: "test@gmail.com", password: 2134132 });
+      .send({ ...validLoginInfo, ...overrides });
 
     expectError(response, {
       status: 400,

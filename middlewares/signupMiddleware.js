@@ -26,7 +26,7 @@ function signupMiddleware(req, res, next) {
     return res.status(400).json({
       success: false,
       error: {
-        message: "name length must be more than 6",
+        message: "Name length must be more than 6",
         code: errorCodes.INVALID_NAME_LENGTH,
       },
     });
@@ -42,10 +42,23 @@ function signupMiddleware(req, res, next) {
     });
   }
 
+  if (userName.length < 6) {
+    return res.status(400).json({
+      success: false,
+      error: {
+        message: "Username length must be more than 6",
+        code: errorCodes.INVALID_USERNAME_LENGTH,
+      },
+    });
+  }
+
   if (!validateUsername(userName)) {
     return res.status(400).json({
       success: false,
-      error: { message: "username can only contains numbers and characters" },
+      error: {
+        message: "username can only contains numbers and characters",
+        code: errorCodes.INVALID_USERNAME,
+      },
     });
   }
 
