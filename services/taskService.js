@@ -22,8 +22,8 @@ async function createNewTask(
   await requirePermission(
     startupId,
     userId,
-    ["owner"],
-    "Only owner can create new tasks",
+    ["owner", "admin"],
+    "Only owner and admin can create new tasks",
   );
 
   const newTask = await taskRepository.createNewTask(
