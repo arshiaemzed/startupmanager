@@ -8,6 +8,7 @@ const {
 } = require("../helpers/auth");
 const cleanDatabase = require("../helpers/cleanDatabase");
 const expectError = require("../helpers/expectError");
+const uuid = require("uuid");
 
 describe("POST /startup", () => {
   test("should return an object when creating startup", async () => {
@@ -99,6 +100,30 @@ describe("POST /startup", () => {
       status: 400,
       code: "INVALID_FIELD",
       message: "Invalid description field(Bad Request)",
+    });
+  });
+
+  test("Should not allow a user to use join endpoint if provided with no authorization", async () => {
+    const id = uuid.v4();
+    const response = await request(app).post(`/startup`);
+
+    expectError(response, {
+      status: 401,
+      code: "NO_AUTHORIZATION",
+      message: "No authorization",
+    });
+  });
+
+  test("Should not allow a user to use join endpoint if provided with invalid/expired token", async () => {
+    const id = uuid.v4();
+    const response = await request(app)
+      .post(`/startup`)
+      .set("Authorization", `Bearer ${id}`);
+
+    expectError(response, {
+      status: 401,
+      code: "INVALID_OR_EXPIRED_ACCESS_TOKEN",
+      message: "Invalid or expired access token",
     });
   });
 

@@ -50,6 +50,8 @@ async function getUserStartups(userId) {
 }
 
 async function getStartup(startupId, userId) {
+  await requireStartup(startupId);
+  await requireJoining(startupId, userId);
   const startup = await startupRepository.getStartup(startupId);
   return startup;
 }

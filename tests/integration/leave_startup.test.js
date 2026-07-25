@@ -8,9 +8,10 @@ const createStartupWithoutMember = require("../helpers/createStartupWithoutMembe
 const { createJoinedStartup } = require("../helpers/createdJoinedStartup");
 const uuid = require("uuid");
 const expectError = require("../helpers/expectError");
+const { createOwnedStartup } = require("../helpers/createOwnedStartup");
 
 describe("POST /startup/leave/:id", () => {
-  test("Should allow a user to leave startup if joined", async () => {
+  test("Should not allow a user to leave startup if joined", async () => {
     const startup = await createJoinedStartup();
 
     expect(startup.response.status).toBe(200);
@@ -29,13 +30,13 @@ describe("POST /startup/leave/:id", () => {
 
     const result = await db.query(
       "SELECT * FROM startup_users WHERE startup_id = $1 AND user_id = $2",
-      [startup.id, startup.user.id],
+      [startup.startup.id, startup.user.id],
     );
 
     expect(result.rows).toHaveLength(0);
   });
 
-  test("Should disallow a user trying to leave a startup that they are not joined in", async () => {
+  test("Should not allow a user trying to leave a startup that they are not joined in", async () => {
     const startup = await createStartupWithoutMember();
 
     const response = await request(app)
@@ -49,7 +50,7 @@ describe("POST /startup/leave/:id", () => {
     });
   });
 
-  test("Should disallow a user trying to leave a startup that has invalid id param input", async () => {
+  test("Should not allow a user trying to leave a startup that has invalid id param input", async () => {
     const user = await createTestUser();
 
     const token = await createAccessToken(user.id);
@@ -65,7 +66,7 @@ describe("POST /startup/leave/:id", () => {
     });
   });
 
-  test("Should disallow a user trying to leave a startup that doesnt exist", async () => {
+  test("Should not allow a user trying to leave a startup that doesnt exist", async () => {
     const user = await createTestUser();
 
     const token = await createAccessToken(user.id);
@@ -76,10 +77,14 @@ describe("POST /startup/leave/:id", () => {
       .post(`/startup/leave/${id}`)
       .set("Authorization", `Bearer ${token}`);
 
-    expect(response.status).toBe(404);
+    expectError(response, {
+      status: 404,
+      code: "STARTUP_DOESNT_EXIST",
+      message: "Startup does not exists",
+    });
   });
 
-  test("Should disallow a user to use leave endpoint if provided with no authorization", async () => {
+  test("Should not allow a user to use leave endpoint if provided with no authorization", async () => {
     const id = uuid.v4();
     const response = await request(app).post(`/startup/leave/${id}`);
 
@@ -90,7 +95,7 @@ describe("POST /startup/leave/:id", () => {
     });
   });
 
-  test("Should disallow a user to use leave endpoint if provided with invalid/expired token", async () => {
+  test("Should not allow a user to use leave endpoint if provided with invalid/expired token", async () => {
     const id = uuid.v4();
     const response = await request(app)
       .post(`/startup/leave/${id}`)
@@ -101,6 +106,32 @@ describe("POST /startup/leave/:id", () => {
       code: "INVALID_OR_EXPIRED_ACCESS_TOKEN",
       message: "Invalid or expired access token",
     });
+  });
+
+  test("Should delete the startup if owner leaves", async () => {
+    const startup = await createOwnedStartup();
+
+    const response = await request(app)
+      .post(`/startup/leave/${startup.startup.id}`)
+      .set("Authorization", `Bearer ${startup.token}`);
+
+    expect(response.status).toBe(200);
+
+    expect(response.body).toHaveProperty("message");
+
+    expect(response.body.message).toBe("successfully deleted startup");
+
+    expect(typeof response.body.message).toBe("string");
+
+    const startups = await db.query("SELECT * FROM startups");
+
+    const startupUsers = await db.query("SELECT * FROM startup_users");
+
+    const startupTasks = await db.query("SELECT * FROM tasks");
+
+    expect(startups.rows).toHaveLength(0);
+    expect(startupUsers.rows).toHaveLength(0);
+    expect(startupTasks.rows).toHaveLength(0);
   });
 
   beforeEach(async () => {

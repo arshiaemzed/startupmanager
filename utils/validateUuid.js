@@ -2,7 +2,7 @@ const { validate } = require("uuid");
 const errorCodes = require("./errorCodes");
 const AppError = require("../customErrors");
 
-function validateUUID(input, res, errorMessage) {
+function validateUUID(input, errorMessage) {
   const isValid = validate(input);
   if (!isValid) {
     throw new AppError(400, errorCodes.INVALID_PARAMETER, errorMessage);

@@ -36,6 +36,40 @@ describe("DELETE /startup/:id", () => {
     });
   });
 
+  test("Should not allow a user trying to delete a startup that has invalid id param input", async () => {
+    const user = await createTestUser();
+
+    const token = await createAccessToken(user.id);
+
+    const response = await request(app)
+      .delete("/startup/randomali")
+      .set("Authorization", `Bearer ${token}`);
+
+    expectError(response, {
+      status: 400,
+      code: "INVALID_PARAMETER",
+      message: "invalid input for id param.",
+    });
+  });
+
+  test("Should not allow a user trying to delete a startup that doesnt exist", async () => {
+    const user = await createTestUser();
+
+    const token = await createAccessToken(user.id);
+
+    const id = uuid.v4();
+
+    const response = await request(app)
+      .delete(`/startup/${id}`)
+      .set("Authorization", `Bearer ${token}`);
+
+    expectError(response, {
+      status: 404,
+      code: "STARTUP_DOESNT_EXIST",
+      message: "Startup does not exists",
+    });
+  });
+
   test("should not be able to delete startup if not joined", async () => {
     const startup = await createStartupWithoutMember();
 
