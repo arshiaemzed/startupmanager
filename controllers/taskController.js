@@ -48,7 +48,7 @@ async function deleteSingleTask(req, res, next) {
     userId,
   );
 
-  return res.status(200).json(deletedTask);
+  return res.status(204).json(deletedTask);
 }
 
 async function updateTaskAssignedUser(req, res, next) {

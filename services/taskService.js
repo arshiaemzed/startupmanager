@@ -1,3 +1,4 @@
+const AppError = require("../customErrors");
 const {
   requireStartup,
   requireJoining,
@@ -6,6 +7,7 @@ const {
 } = require("../guards/serviceGuard");
 
 const taskRepository = require("../repositories/taskRepository");
+const errorCodes = require("../utils/errorCodes");
 
 async function createNewTask(
   title,
@@ -54,6 +56,14 @@ async function getSingleTask(startupId, taskId, userId) {
 
   const task = await taskRepository.getSpecificTask(startupId, taskId);
 
+  if (task.length < 1) {
+    throw new AppError(
+      404,
+      errorCodes.TASK_NOT_FOUND,
+      "Unable to find the task.",
+    );
+  }
+
   return task;
 }
 
@@ -76,7 +86,15 @@ async function deleteSpecificTask(startupId, taskId, userId) {
     taskId,
   );
 
-  return deletedTask;
+  if (deletedTask.length < 1) {
+    throw new AppError(
+      404,
+      errorCodes.TASK_NOT_FOUND,
+      "Unable to find the task.",
+    );
+  }
+
+  return { message: "task was deleted successfully" };
 }
 
 async function updateTaskAssignedUser(
@@ -130,6 +148,14 @@ async function updateTask(
     status,
     assignedTo,
   );
+
+  if (!updatedTask) {
+    throw new AppError(
+      404,
+      errorCodes.TASK_NOT_FOUND,
+      "Unable to find the task.",
+    );
+  }
 
   return updatedTask;
 }

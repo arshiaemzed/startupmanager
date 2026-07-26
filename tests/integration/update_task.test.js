@@ -1,0 +1,222 @@
+const db = require("../../database/db");
+const request = require("supertest");
+const app = require("../../app");
+const cleanDatabase = require("../helpers/cleanDatabase");
+const createTestStartup = require("../helpers/createTestStartup");
+const createMockTaskForStartup = require("../helpers/createTaskForStartup");
+const createStartupWithoutMember = require("../helpers/createStartupWithoutMember");
+const { createTestUser, createAccessToken } = require("../helpers/auth");
+const expectError = require("../helpers/expectError");
+const uuid = require("uuid");
+
+describe("PATCH /startup/:startupid/tasks/:id", () => {
+  test("Should update task", async () => {
+    const data = await createTestStartup();
+    const task = await createMockTaskForStartup(data.startup.id);
+
+    const response = await request(app)
+      .patch(`/startup/${data.startup.id}/tasks/${task.id}`)
+      .set("Authorization", `Bearer ${data.token}`)
+      .send({
+        title: "Updated task",
+        description: "updated task description",
+        status: "in_progress",
+        assigned_to: data.user.id,
+      });
+
+    expect(response.status).toBe(200);
+
+    expect(response.body).toHaveProperty("id");
+    expect(response.body).toHaveProperty("name");
+    expect(response.body).toHaveProperty("description");
+    expect(response.body).toHaveProperty("status");
+    expect(response.body).toHaveProperty("assigned_to");
+
+    expect(response.body).toHaveProperty("created_at");
+    expect(response.body).toHaveProperty("updated_at");
+    expect(response.body).toHaveProperty("task_order");
+
+    expect(typeof response.body.id).toBe("string");
+    expect(typeof response.body.name).toBe("string");
+    expect(typeof response.body.description).toBe("string");
+    expect(typeof response.body.status).toBe("string");
+
+    expect(typeof response.body.created_at).toBe("string");
+    expect(typeof response.body.updated_at).toBe("string");
+    expect(typeof response.body.task_order).toBe("number");
+
+    expect(response.body.name).toBe("Updated task");
+    expect(response.body.description).toBe("updated task description");
+    expect(response.body.status).toBe("in_progress");
+  });
+
+  test("Should not be able to update task if not joined in the startup", async () => {
+    const data = await createStartupWithoutMember();
+
+    const user = await createTestUser();
+    const token = await createAccessToken(user.id);
+
+    const task = await createMockTaskForStartup(data.startupData.id);
+
+    const response = await request(app)
+      .patch(`/startup/${data.startupData.id}/tasks/${task.id}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        title: "Updated task",
+        description: "updated task description",
+        status: "in_progress",
+        assigned_to: user.id,
+      });
+
+    expectError(response, {
+      status: 403,
+      code: "NOT_JOINED_IN_STARTUP",
+      message: "You are not joined in the startup",
+    });
+  });
+
+  test("Should not be able to update the task if startup doesnt exists", async () => {
+    const user = await createTestUser();
+    const token = await createAccessToken(user.id);
+
+    const id = uuid.v4();
+
+    const response = await request(app)
+      .patch(`/startup/${id}/tasks/${id}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        title: "Updated task",
+        description: "updated task description",
+        status: "in_progress",
+        assigned_to: user.id,
+      });
+
+    expectError(response, {
+      status: 404,
+      code: "STARTUP_DOESNT_EXIST",
+      message: "Startup does not exists",
+    });
+  });
+
+  test("Should fail to update task if provided with invalid value for startupid param", async () => {
+    const startup = await createTestStartup();
+    const task = await createMockTaskForStartup(startup.startup.id);
+
+    const response = await request(app)
+      .patch(`/startup/invalid/tasks/${task.id}`)
+      .set("Authorization", `Bearer ${startup.token}`)
+      .send({
+        title: "Updated task",
+        description: "updated task description",
+        status: "in_progress",
+        assigned_to: startup.user.id,
+      });
+
+    expectError(response, {
+      status: 400,
+      code: "INVALID_PARAMETER",
+      message: "Invalid input for startupid param.",
+    });
+  });
+
+  test("Should fail to update task if task doesnt exists", async () => {
+    const id = uuid.v4();
+    const startup = await createTestStartup();
+    const token = await createAccessToken(startup.user.id);
+
+    const response = await request(app)
+      .patch(`/startup/${startup.startup.id}/tasks/${id}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        title: "Updated task",
+        description: "updated task description",
+        status: "in_progress",
+        assigned_to: startup.user.id,
+      });
+
+    expectError(response, {
+      status: 404,
+      code: "TASK_NOT_FOUND",
+      message: "Unable to find the task.",
+    });
+  });
+
+  test("Should fail to update task if provided with invalid value for id param", async () => {
+    const startup = await createTestStartup();
+    const token = await createAccessToken(startup.user.id);
+
+    const response = await request(app)
+      .get(`/startup/${startup.startup.id}/tasks/invalid`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        title: "Updated task",
+        description: "updated task description",
+        status: "in_progress",
+        assigned_to: startup.user.id,
+      });
+
+    expectError(response, {
+      status: 400,
+      code: "INVALID_PARAMETER",
+      message: "invalid input for id param.",
+    });
+  });
+
+  const validTask = {
+    title: "Valid task",
+    description: "Valid task description",
+    status: "todo",
+    assigned_to: null,
+  };
+
+  test("Should not allow a user to use update a task within a startup if provided with no authorization", async () => {
+    const id = uuid.v4();
+
+    const startup = await createTestStartup();
+
+    const task = await createMockTaskForStartup(startup.startup.id);
+
+    const response = await request(app)
+      .patch(`/startup/${startup.startup.id}/tasks/${task.id}`)
+      .send({
+        title: "Updated task",
+        description: "updated task description",
+        status: "in_progress",
+        assigned_to: startup.user.id,
+      });
+
+    expectError(response, {
+      status: 401,
+      code: "NO_AUTHORIZATION",
+      message: "No authorization",
+    });
+  });
+
+  test("Should not allow a user to update a task withtin a startup if provided with invalid/expired token", async () => {
+    const id = uuid.v4();
+
+    const startup = await createTestStartup();
+
+    const task = await createMockTaskForStartup(startup.startup.id);
+
+    const response = await request(app)
+      .patch(`/startup/${startup.startup.id}/tasks/${task.id}`)
+      .set("Authorization", `Bearer ${id}`)
+      .send({
+        title: "Updated task",
+        description: "updated task description",
+        status: "in_progress",
+        assigned_to: startup.user.id,
+      });
+
+    expectError(response, {
+      status: 401,
+      code: "INVALID_OR_EXPIRED_ACCESS_TOKEN",
+      message: "Invalid or expired access token",
+    });
+  });
+
+  beforeEach(async () => {
+    await cleanDatabase();
+  });
+});

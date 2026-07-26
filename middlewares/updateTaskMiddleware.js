@@ -1,14 +1,28 @@
 const errorCodes = require("../utils/errorCodes");
 const validateParam = require("../utils/validateParam");
+const AppError = require("../customErrors");
+const validateUuid = require("../utils/validateUuid");
 
 function updateTaskMiddleware(req, res, next) {
   const startupId = req.params.startupid;
+
+  validateUuid(startupId, "Invalid input for startupid param.");
 
   validateParam(startupId, "startupid param missing (Bad request)");
 
   const taskId = req.params.id;
 
+  validateUuid(startupId, "Invalid input for id param.");
+
   validateParam(taskId, "id param missing (Bad request)");
+
+  if (!req.body) {
+    throw new AppError(
+      400,
+      errorCodes.INVALID_REQUEST_BODY,
+      "Invalid request body.",
+    );
+  }
 
   const status = req.body.status;
 

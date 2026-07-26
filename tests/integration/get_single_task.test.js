@@ -7,27 +7,20 @@ const cleanDatabase = require("../helpers/cleanDatabase");
 const { createTestUser, createAccessToken } = require("../helpers/auth");
 const expectError = require("../helpers/expectError");
 const createStartupWithoutMember = require("../helpers/createStartupWithoutMember");
+const createMockTaskForStartup = require("../helpers/createTaskForStartup");
 
-describe("GET /startup/:id/tasks", () => {
-  test("Should return all startup tasks", async () => {
+describe("POST /startup/:startupid/tasks/:id", () => {
+  test("Should get a task", async () => {
     const startup = await createTestStartup();
 
-    await db.query(
-      "INSERT INTO tasks (name, description, startup_id, assigned_to, status) VALUES ($1, $2, $3, $4, $5)",
-      [
-        "My task",
-        "this is my task",
-        startup.startup.id,
-        startup.user.id,
-        "todo",
-      ],
-    );
+    const task = await createMockTaskForStartup(startup.startup.id);
 
     const response = await request(app)
-      .get(`/startup/${startup.startup.id}/tasks`)
+      .get(`/startup/${startup.startup.id}/tasks/${task.id}`)
       .set("Authorization", `Bearer ${startup.token}`);
 
     expect(response.status).toBe(200);
+
     expect(response.body[0]).toHaveProperty("id");
     expect(response.body[0]).toHaveProperty("name");
     expect(response.body[0]).toHaveProperty("description");
@@ -39,13 +32,15 @@ describe("GET /startup/:id/tasks", () => {
     expect(response.body[0]).toHaveProperty("task_order");
   });
 
-  test("Should fail to get all task if startup doesnt exists", async () => {
+  test("Should fail to get task if startup doesnt exists", async () => {
     const id = uuid.v4();
-    const user = await createTestUser();
-    const token = await createAccessToken(user.id);
+
+    const startup = await createTestStartup();
+    const task = await createMockTaskForStartup(startup.startup.id);
+    const token = await createAccessToken(startup.user.id);
 
     const response = await request(app)
-      .get(`/startup/${id}/tasks`)
+      .get(`/startup/${id}/tasks/${task.id}`)
       .set("Authorization", `Bearer ${token}`);
 
     expectError(response, {
@@ -55,12 +50,45 @@ describe("GET /startup/:id/tasks", () => {
     });
   });
 
-  test("Should fail to get all tasks within a startup if provided with invalid value for id param", async () => {
+  test("Should fail to get a task if provided with invalid value for startupid param", async () => {
     const startup = await createTestStartup();
+    const task = await createMockTaskForStartup(startup.startup.id);
+    const token = await createAccessToken(startup.user.id);
 
     const response = await request(app)
-      .get(`/startup/invalid/tasks`)
+      .get(`/startup/invalid/tasks/${task.id}`)
       .set("Authorization", `Bearer ${startup.token}`);
+
+    expectError(response, {
+      status: 400,
+      code: "INVALID_PARAMETER",
+      message: "invalid input for startupid param.",
+    });
+  });
+
+  test("Should fail to get task if task doesnt exists", async () => {
+    const id = uuid.v4();
+    const startup = await createTestStartup();
+    const token = await createAccessToken(startup.user.id);
+
+    const response = await request(app)
+      .get(`/startup/${startup.startup.id}/tasks/${id}`)
+      .set("Authorization", `Bearer ${token}`);
+
+    expectError(response, {
+      status: 404,
+      code: "TASK_NOT_FOUND",
+      message: "Unable to find the task.",
+    });
+  });
+
+  test("Should fail to get task if provided with invalid value for id param", async () => {
+    const startup = await createTestStartup();
+    const token = await createAccessToken(startup.user.id);
+
+    const response = await request(app)
+      .get(`/startup/${startup.startup.id}/tasks/invalid`)
+      .set("Authorization", `Bearer ${token}`);
 
     expectError(response, {
       status: 400,
@@ -69,13 +97,14 @@ describe("GET /startup/:id/tasks", () => {
     });
   });
 
-  test("Should fail to get all tasks within startup if not joined in the startup", async () => {
+  test("Should fail to get a task if not joined in the startup", async () => {
     const startup = await createStartupWithoutMember();
     const user = await createTestUser();
     const token = await createAccessToken(user.id);
+    const task = await createMockTaskForStartup(startup.startupData.id);
 
     const response = await request(app)
-      .get(`/startup/${startup.startupData.id}/tasks`)
+      .get(`/startup/${startup.startupData.id}/tasks/${task.id}`)
       .set("Authorization", `Bearer ${token}`);
 
     expectError(response, {
@@ -85,7 +114,7 @@ describe("GET /startup/:id/tasks", () => {
     });
   });
 
-  test("Should not allow a user to use get all tasks within a startup if provided with no authorization", async () => {
+  test("Should not allow a user to use get a task within a startup if provided with no authorization", async () => {
     const id = uuid.v4();
     const response = await request(app)
       .post(`/startup/${id}/tasks`)
@@ -98,7 +127,7 @@ describe("GET /startup/:id/tasks", () => {
     });
   });
 
-  test("Should not allow a user to get allt asks withtin a startup if provided with invalid/expired token", async () => {
+  test("Should not allow a user to get a task withtin a startup if provided with invalid/expired token", async () => {
     const id = uuid.v4();
 
     const response = await request(app)
