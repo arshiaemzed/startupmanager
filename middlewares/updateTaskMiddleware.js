@@ -2,6 +2,7 @@ const errorCodes = require("../utils/errorCodes");
 const validateParam = require("../utils/validateParam");
 const AppError = require("../customErrors");
 const validateUuid = require("../utils/validateUuid");
+const validateField = require("../utils/validateField");
 
 function updateTaskMiddleware(req, res, next) {
   const startupId = req.params.startupid;
@@ -24,7 +25,11 @@ function updateTaskMiddleware(req, res, next) {
     );
   }
 
-  const status = req.body.status;
+  const { status, title, description } = req.body;
+
+  validateField(title, "Invalid title.");
+  validateField(description, "Invalid description.");
+  validateField(status, "Invalid status.");
 
   if (
     status &&

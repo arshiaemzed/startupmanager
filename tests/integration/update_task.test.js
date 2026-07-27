@@ -169,7 +169,85 @@ describe("PATCH /startup/:startupid/tasks/:id", () => {
     assigned_to: null,
   };
 
-  test("Should not allow a user to use update a task within a startup if provided with no authorization", async () => {
+  test.each([
+    { case: "title is empty string", overrides: { title: "" } },
+    { case: "title is wrong type", overrides: { title: 12313 } },
+    { case: "title is invalid", overrides: { title: undefined } },
+  ])(
+    "Should not allow a user to update a task if $case ",
+    async ({ overrides }) => {
+      const data = await createTestStartup();
+      const task = await createMockTaskForStartup(data.startup.id);
+
+      const response = await request(app)
+        .patch(`/startup/${data.startup.id}/tasks/${task.id}`)
+        .set("Authorization", `Bearer ${data.token}`)
+        .send({
+          ...validTask,
+          ...overrides,
+        });
+
+      expectError(response, {
+        status: 400,
+        code: "INVALID_FIELD",
+        message: "Invalid title.",
+      });
+    },
+  );
+
+  test.each([
+    { case: "description is empty string", overrides: { description: "" } },
+    { case: "description is wrong type", overrides: { description: 12313 } },
+    { case: "description is invalid", overrides: { description: undefined } },
+  ])(
+    "Should not allow a user to update a task if $case ",
+    async ({ overrides }) => {
+      const data = await createTestStartup();
+      const task = await createMockTaskForStartup(data.startup.id);
+
+      const response = await request(app)
+        .patch(`/startup/${data.startup.id}/tasks/${task.id}`)
+        .set("Authorization", `Bearer ${data.token}`)
+        .send({
+          ...validTask,
+          ...overrides,
+        });
+
+      expectError(response, {
+        status: 400,
+        code: "INVALID_FIELD",
+        message: "Invalid description.",
+      });
+    },
+  );
+
+  test.each([
+    { case: "status is empty string", overrides: { status: "" } },
+    { case: "status is wrong type", overrides: { status: 12313 } },
+    { case: "status is invalid", overrides: { status: undefined } },
+  ])(
+    "Should not allow a user to update a task if $case ",
+    async ({ overrides }) => {
+      const data = await createTestStartup();
+      const task = await createMockTaskForStartup(data.startup.id);
+
+      const response = await request(app)
+        .patch(`/startup/${data.startup.id}/tasks/${task.id}`)
+        .set("Authorization", `Bearer ${data.token}`)
+        .send({
+          ...validTask,
+          ...overrides,
+        });
+
+      expectError(response, {
+        status: 400,
+        code: "INVALID_FIELD",
+        message: "Invalid status.",
+      });
+    },
+  );
+
+  test("Should not allow a user to  update a task within a startup if provided with no authorization", async () => {
     const id = uuid.v4();
 
     const startup = await createTestStartup();
