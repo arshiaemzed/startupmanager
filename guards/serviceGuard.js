@@ -50,6 +50,18 @@ async function requireJoining(startupId, userId) {
   }
 }
 
+async function requireUserBeginJoined(startupId, targetId) {
+  const isJoined = await startupRepository.isUserInStartup(startupId, targetId);
+
+  if (!isJoined) {
+    throw new AppError(
+      403,
+      errorCodes.SPECIFIED_USER_NOT_JOINED_IN_STARTUP,
+      "The specified user is not joined in the startup.",
+    );
+  }
+}
+
 async function requireNotBeginJoined(startupId, userId) {
   const alreadyJoined = await startupRepository.isUserInStartup(
     startupId,
@@ -71,4 +83,5 @@ module.exports = {
   requirePermission,
   requireJoining,
   requireNotBeginJoined,
+  requireUserBeginJoined,
 };

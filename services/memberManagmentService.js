@@ -3,6 +3,7 @@ const {
   requireStartup,
   requireJoining,
   requirePermission,
+  requireUserBeginJoined,
 } = require("../guards/serviceGuard");
 const memeberManagmentMiddleware = require("../middlewares/memberManagmentMiddleware");
 
@@ -13,13 +14,6 @@ async function getAllMembers(userId, startupId) {
   await requireStartup(startupId);
 
   await requireJoining(startupId, userId);
-
-  await requirePermission(
-    startupId,
-    userId,
-    ["owner", "admin"],
-    "Only owner's and admin's can see all members",
-  );
 
   const members = await memberManagmentRepository.getAllMembers(startupId);
 
@@ -66,11 +60,11 @@ async function inviteUserToStartup(startupId, userId, memberId) {
 }
 
 async function getSpecificMember(startupId, userId, targetId) {
-  requireStartup(startupId);
+  await requireStartup(startupId);
 
-  requireJoining(startupId, targetId);
+  await requireJoining(startupId, userId);
 
-  requireJoining(startupId, targetId);
+  await requireUserBeginJoined(startupId, targetId);
 
   const member = await memberManagmentRepository.getSpecificMember(
     startupId,
