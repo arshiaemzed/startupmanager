@@ -8,6 +8,7 @@ const createStartupWithoutMember = require("../helpers/createStartupWithoutMembe
 const { createTestUser, createAccessToken } = require("../helpers/auth");
 const expectError = require("../helpers/expectError");
 const uuid = require("uuid");
+const expectAuth = require("../helpers/expectAuth");
 
 describe("PATCH /startup/:startupid/tasks/:id", () => {
   test("Should update task", async () => {
@@ -146,7 +147,7 @@ describe("PATCH /startup/:startupid/tasks/:id", () => {
     const token = await createAccessToken(startup.user.id);
 
     const response = await request(app)
-      .get(`/startup/${startup.startup.id}/tasks/invalid`)
+      .patch(`/startup/${startup.startup.id}/tasks/invalid`)
       .set("Authorization", `Bearer ${token}`)
       .send({
         title: "Updated task",
@@ -247,52 +248,7 @@ describe("PATCH /startup/:startupid/tasks/:id", () => {
     },
   );
 
-  test("Should not allow a user to  update a task within a startup if provided with no authorization", async () => {
-    const id = uuid.v4();
-
-    const startup = await createTestStartup();
-
-    const task = await createMockTaskForStartup(startup.startup.id);
-
-    const response = await request(app)
-      .patch(`/startup/${startup.startup.id}/tasks/${task.id}`)
-      .send({
-        title: "Updated task",
-        description: "updated task description",
-        status: "in_progress",
-        assigned_to: startup.user.id,
-      });
-
-    expectError(response, {
-      status: 401,
-      code: "NO_AUTHORIZATION",
-      message: "No authorization",
-    });
-  });
-
-  test("Should not allow a user to update a task withtin a startup if provided with invalid/expired token", async () => {
-    const id = uuid.v4();
-
-    const startup = await createTestStartup();
-
-    const task = await createMockTaskForStartup(startup.startup.id);
-
-    const response = await request(app)
-      .patch(`/startup/${startup.startup.id}/tasks/${task.id}`)
-      .set("Authorization", `Bearer ${id}`)
-      .send({
-        title: "Updated task",
-        description: "updated task description",
-        status: "in_progress",
-        assigned_to: startup.user.id,
-      });
-
-    expectError(response, {
-      status: 401,
-      code: "INVALID_OR_EXPIRED_ACCESS_TOKEN",
-      message: "Invalid or expired access token",
-    });
-  });
+  expectAuth("patch", `/startup/${uuid.v4()}/tasks/${uuid.v4()}`);
 
   beforeEach(async () => {
     await cleanDatabase();

@@ -7,6 +7,7 @@ const cleanDatabase = require("../helpers/cleanDatabase");
 const { createTestUser, createAccessToken } = require("../helpers/auth");
 const expectError = require("../helpers/expectError");
 const createStartupWithoutMember = require("../helpers/createStartupWithoutMember");
+const expectAuth = require("../helpers/expectAuth");
 
 describe("GET /startup/:id/tasks", () => {
   test("Should return all startup tasks", async () => {
@@ -85,33 +86,7 @@ describe("GET /startup/:id/tasks", () => {
     });
   });
 
-  test("Should not allow a user to use get all tasks within a startup if provided with no authorization", async () => {
-    const id = uuid.v4();
-    const response = await request(app)
-      .post(`/startup/${id}/tasks`)
-      .send({ title: "Test task", description: "this is a test task" });
-
-    expectError(response, {
-      status: 401,
-      code: "NO_AUTHORIZATION",
-      message: "No authorization",
-    });
-  });
-
-  test("Should not allow a user to get allt asks withtin a startup if provided with invalid/expired token", async () => {
-    const id = uuid.v4();
-
-    const response = await request(app)
-      .post(`/startup/${id}/tasks`)
-      .send({ title: "Test task", description: "this is a test task" })
-      .set("Authorization", `Bearer ${id}`);
-
-    expectError(response, {
-      status: 401,
-      code: "INVALID_OR_EXPIRED_ACCESS_TOKEN",
-      message: "Invalid or expired access token",
-    });
-  });
+  expectAuth("get", `/startup/${uuid.v4()}/tasks`);
 
   beforeEach(async () => {
     await cleanDatabase();

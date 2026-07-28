@@ -7,6 +7,7 @@ const { createTestUser, createAccessToken } = require("../helpers/auth");
 const insertUserIntoStartup = require("../helpers/insertUserIntoStartup");
 const expectError = require("../helpers/expectError");
 const uuid = require("uuid");
+const expectAuth = require("../helpers/expectAuth");
 
 describe("GET /startup/:id/members/:memberid", () => {
   test("Should be able to get a specific member info", async () => {
@@ -160,53 +161,7 @@ describe("GET /startup/:id/members/:memberid", () => {
     });
   });
 
-  test("Should not allow user to get specific member within a startup if provided with no authorization", async () => {
-    const startup = await createTestStartup();
-
-    const user = await createTestUser({
-      email: "secondsamira@gmail.com",
-      userName: "fake_samira",
-      name: "Khode samira",
-      password: "samira1234",
-    });
-
-    await insertUserIntoStartup(startup.startup.id, user.id);
-
-    const response = await request(app).get(
-      `/startup/${startup.startup.id}/members/${user.id}`,
-    );
-
-    expectError(response, {
-      status: 401,
-      code: "NO_AUTHORIZATION",
-      message: "No authorization",
-    });
-  });
-
-  test("Should not allow a user to get all members withtin a startup if provided with invalid/expired token", async () => {
-    const startup = await createTestStartup();
-
-    const user = await createTestUser({
-      email: "secondsamira@gmail.com",
-      userName: "fake_samira",
-      name: "Khode samira",
-      password: "samira1234",
-    });
-
-    const id = uuid.v4();
-
-    await insertUserIntoStartup(startup.startup.id, user.id);
-
-    const response = await request(app)
-      .get(`/startup/${startup.startup.id}/members/${user.id}`)
-      .set("Authorization", `Bearer ${id}`);
-
-    expectError(response, {
-      status: 401,
-      code: "INVALID_OR_EXPIRED_ACCESS_TOKEN",
-      message: "Invalid or expired access token",
-    });
-  });
+  expectAuth("get", `/startup/${uuid.v4()}/members/${uuid.v4()}`);
 
   beforeEach(async () => {
     await cleanDatabase();

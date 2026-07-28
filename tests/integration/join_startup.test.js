@@ -7,6 +7,7 @@ const createStartupWithoutMember = require("../helpers/createStartupWithoutMembe
 const { createTestUser, createAccessToken } = require("../helpers/auth");
 const expectError = require("../helpers/expectError");
 const uuid = require("uuid");
+const expectAuth = require("../helpers/expectAuth");
 
 describe("POST /startup/join/:id", () => {
   test("should join startup", async () => {

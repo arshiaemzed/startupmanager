@@ -26,8 +26,6 @@ describe("POST /startup", () => {
       .set("Authorization", `Bearer ${token}`)
       .send({ name: "test startup", description: "test description startup" });
 
-    const query = await db.query("SELECT * FROM startups");
-
     expect(response.status).toBe(201);
 
     expect(response.body).toHaveProperty("id");
@@ -35,6 +33,11 @@ describe("POST /startup", () => {
     expect(response.body).toHaveProperty("title");
     expect(response.body).toHaveProperty("description");
 
+    expect(response.body.owner).toBe(user.id);
+    expect(response.body.title).toBe("test startup");
+    expect(response.body.description).toBe("test description startup");
+
+    const query = await db.query("SELECT * FROM startups");
     expect(query.rows).toHaveLength(1);
   });
 

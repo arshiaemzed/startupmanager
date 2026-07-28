@@ -9,6 +9,7 @@ const { createJoinedStartup } = require("../helpers/createdJoinedStartup");
 const uuid = require("uuid");
 const expectError = require("../helpers/expectError");
 const { createOwnedStartup } = require("../helpers/createOwnedStartup");
+const expectAuth = require("../helpers/expectAuth");
 
 describe("POST /startup/leave/:id", () => {
   test("Should not allow a user to leave startup if joined", async () => {
@@ -133,6 +134,8 @@ describe("POST /startup/leave/:id", () => {
     expect(startupUsers.rows).toHaveLength(0);
     expect(startupTasks.rows).toHaveLength(0);
   });
+
+  expectAuth("post", `/startup/leave/${uuid.v4()}`);
 
   beforeEach(async () => {
     await cleanDatabase();

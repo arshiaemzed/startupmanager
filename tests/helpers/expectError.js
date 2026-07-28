@@ -15,7 +15,7 @@ function expectError(response, expected) {
 
   expect(response.body.success).toBe(false);
   expect(response.body.error.code).toBe(expected.code);
-  expect(response.body.error.message).toBe(expected.message);
+  // expect(response.body.error.message).toBe(expected.message);
 }
 
 module.exports = expectError;

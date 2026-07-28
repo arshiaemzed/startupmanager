@@ -4,6 +4,7 @@ const request = require("supertest");
 const cleanDatabase = require("../helpers/cleanDatabase");
 const { createTestUser, createRefreshToken } = require("../helpers/auth");
 const expectError = require("../helpers/expectError");
+const expectAuth = require("../helpers/expectAuth");
 
 describe("POST /auth/logout", () => {
   test("should allow user to logout if provided with valid refresh token", async () => {

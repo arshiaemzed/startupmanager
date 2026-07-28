@@ -6,6 +6,7 @@ const { createTestUser, createAccessToken } = require("../helpers/auth");
 const { createJoinedStartup } = require("../helpers/createdJoinedStartup");
 const uuid = require("uuid");
 const expectError = require("../helpers/expectError");
+const expectAuth = require("../helpers/expectAuth");
 
 describe("GET /startups", () => {
   test("should get user startups", async () => {
@@ -27,28 +28,7 @@ describe("GET /startups", () => {
     expect(startupData).toHaveProperty("role");
   });
 
-  test("Should not allow a user to use get endpoint if provided with no authorization", async () => {
-    const response = await request(app).get(`/startups`);
-
-    expectError(response, {
-      status: 401,
-      code: "NO_AUTHORIZATION",
-      message: "No authorization",
-    });
-  });
-
-  test("Should not allow a user to use get endpoint if provided with invalid/expired token", async () => {
-    const id = uuid.v4();
-    const response = await request(app)
-      .get(`/startups`)
-      .set("Authorization", `Bearer ${id}`);
-
-    expectError(response, {
-      status: 401,
-      code: "INVALID_OR_EXPIRED_ACCESS_TOKEN",
-      message: "Invalid or expired access token",
-    });
-  });
+  expectAuth("get", `/startups`);
 
   beforeEach(async () => {
     await cleanDatabase();

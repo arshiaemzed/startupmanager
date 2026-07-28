@@ -15,7 +15,11 @@ describe("POST /startup/:id/tasks", () => {
     const response = await request(app)
       .post(`/startup/${startup.startup.id}/tasks`)
       .set("Authorization", `Bearer ${startup.token}`)
-      .send({ title: "Test task", description: "this is a test task" });
+      .send({
+        title: "Test task",
+        description: "this is a test task",
+        status: "todo",
+      });
 
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty("name");
@@ -24,6 +28,16 @@ describe("POST /startup/:id/tasks", () => {
     expect(response.body).toHaveProperty("status");
     expect(response.body).toHaveProperty("assigned_to");
     expect(response.body).toHaveProperty("created_at");
+
+    expect(response.body.name).toBe("Test task");
+    expect(response.body.description).toBe("this is a test task");
+    expect(response.body.startup_id).toBe(startup.startup.id);
+    expect(response.body.status).toBe("todo");
+    expect(response.body.assigned_to).toBe(null);
+
+    const query = await db.query("SELECT * FROM tasks");
+
+    expect(query.rows).toHaveLength(1);
   });
 
   test("Should fail to create a task if startup doesnt exists", async () => {
@@ -131,7 +145,7 @@ describe("POST /startup/:id/tasks", () => {
     });
   });
 
-  test("Should disallow a user to use delete endpoint if provided with no authorization", async () => {
+  test("Should disallow a user to use create task endpoint if provided with no authorization", async () => {
     const id = uuid.v4();
     const response = await request(app)
       .post(`/startup/${id}/tasks`)
@@ -144,7 +158,7 @@ describe("POST /startup/:id/tasks", () => {
     });
   });
 
-  test("Should disallow a user to use delete endpoint if provided with invalid/expired token", async () => {
+  test("Should disallow a user to use create task endpoint if provided with invalid/expired token", async () => {
     const id = uuid.v4();
 
     const response = await request(app)

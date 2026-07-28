@@ -13,7 +13,7 @@ function updateTaskMiddleware(req, res, next) {
 
   const taskId = req.params.id;
 
-  validateUuid(startupId, "Invalid input for id param.");
+  validateUuid(taskId, "Invalid input for id param.");
 
   validateParam(taskId, "id param missing (Bad request)");
 
