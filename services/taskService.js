@@ -56,7 +56,7 @@ async function getSingleTask(startupId, taskId, userId) {
 
   const task = await taskRepository.getSpecificTask(startupId, taskId);
 
-  if (task.length < 1) {
+  if (!task) {
     throw new AppError(
       404,
       errorCodes.TASK_NOT_FOUND,
@@ -93,8 +93,6 @@ async function deleteSpecificTask(startupId, taskId, userId) {
       "Unable to find the task.",
     );
   }
-
-  return { message: "task was deleted successfully" };
 }
 
 async function updateTaskAssignedUser(

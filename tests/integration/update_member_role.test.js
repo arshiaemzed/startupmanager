@@ -2,7 +2,7 @@ const db = require("../../database/db");
 const request = require("supertest");
 const app = require("../../app");
 const cleanDatabase = require("../helpers/cleanDatabase");
-const createTestStartup = require("../helpers/createTestStartup");
+const createOwnedStartup = require("../helpers/createOwnedStartup");
 const { createTestUser, createAccessToken } = require("../helpers/auth");
 const insertUserIntoStartup = require("../helpers/insertUserIntoStartup");
 const expectError = require("../helpers/expectError");
@@ -11,7 +11,7 @@ const expectAuth = require("../helpers/expectAuth");
 
 describe("PATCH /startup/:id/members/:memberid/role", () => {
   test("Should be able to update member role", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
     const user = await createTestUser({
       email: "testemail@gmail.com",
       userName: "testemailali",
@@ -25,19 +25,25 @@ describe("PATCH /startup/:id/members/:memberid/role", () => {
       .set("Authorization", `Bearer ${startup.token}`)
       .send({ role: "admin" });
 
+    const body = response.body[0];
+
     expect(response.status).toBe(200);
 
-    expect(response.body[0]).toHaveProperty("user_id");
-    expect(response.body[0]).toHaveProperty("startup_id");
-    expect(response.body[0]).toHaveProperty("role");
+    expect(body).toHaveProperty("user_id");
+    expect(body).toHaveProperty("startup_id");
+    expect(body).toHaveProperty("role");
 
-    expect(typeof response.body[0].user_id).toBe("string");
-    expect(typeof response.body[0].startup_id).toBe("string");
-    expect(typeof response.body[0].role).toBe("string");
+    expect(typeof body.user_id).toBe("string");
+    expect(typeof body.startup_id).toBe("string");
+    expect(typeof body.role).toBe("string");
+
+    expect(body.user_id).toBe(user.id);
+    expect(body.startup_id).toBe(startup.startup.id);
+    expect(body.role).toBe("admin");
   });
 
   test("Should not be able to update user role if the user sending the request is not joined in the startup", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
 
     const user = await createTestUser({
       email: "helloworld@gmail.com",

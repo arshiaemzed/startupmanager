@@ -2,7 +2,7 @@ const db = require("../../database/db");
 const request = require("supertest");
 const app = require("../../app");
 const cleanDatabase = require("../helpers/cleanDatabase");
-const createTestStartup = require("../helpers/createTestStartup");
+const createOwnedStartup = require("../helpers/createOwnedStartup");
 const createMockTaskForStartup = require("../helpers/createTaskForStartup");
 const createStartupWithoutMember = require("../helpers/createStartupWithoutMember");
 const { createTestUser, createAccessToken } = require("../helpers/auth");
@@ -12,7 +12,7 @@ const expectAuth = require("../helpers/expectAuth");
 
 describe("PATCH /startup/:startupid/tasks/:id", () => {
   test("Should update task", async () => {
-    const data = await createTestStartup();
+    const data = await createOwnedStartup();
     const task = await createMockTaskForStartup(data.startup.id);
 
     const response = await request(app)
@@ -100,7 +100,7 @@ describe("PATCH /startup/:startupid/tasks/:id", () => {
   });
 
   test("Should fail to update task if provided with invalid value for startupid param", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
     const task = await createMockTaskForStartup(startup.startup.id);
 
     const response = await request(app)
@@ -122,7 +122,7 @@ describe("PATCH /startup/:startupid/tasks/:id", () => {
 
   test("Should fail to update task if task doesnt exists", async () => {
     const id = uuid.v4();
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
     const token = await createAccessToken(startup.user.id);
 
     const response = await request(app)
@@ -143,7 +143,7 @@ describe("PATCH /startup/:startupid/tasks/:id", () => {
   });
 
   test("Should fail to update task if provided with invalid value for id param", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
     const token = await createAccessToken(startup.user.id);
 
     const response = await request(app)
@@ -177,7 +177,7 @@ describe("PATCH /startup/:startupid/tasks/:id", () => {
   ])(
     "Should not allow a user to update a task if $case ",
     async ({ overrides }) => {
-      const data = await createTestStartup();
+      const data = await createOwnedStartup();
       const task = await createMockTaskForStartup(data.startup.id);
 
       const response = await request(app)
@@ -203,7 +203,7 @@ describe("PATCH /startup/:startupid/tasks/:id", () => {
   ])(
     "Should not allow a user to update a task if $case ",
     async ({ overrides }) => {
-      const data = await createTestStartup();
+      const data = await createOwnedStartup();
       const task = await createMockTaskForStartup(data.startup.id);
 
       const response = await request(app)
@@ -229,7 +229,7 @@ describe("PATCH /startup/:startupid/tasks/:id", () => {
   ])(
     "Should not allow a user to update a task if $case ",
     async ({ overrides }) => {
-      const data = await createTestStartup();
+      const data = await createOwnedStartup();
       const task = await createMockTaskForStartup(data.startup.id);
 
       const response = await request(app)

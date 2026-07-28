@@ -31,6 +31,8 @@ async function getSpecificMember(startupId, userId) {
     [startupId, userId],
   );
 
+  // {id: ?, startup_id: ?, user_id: ?, role: ?, joined_on: ?}
+
   return query.rows[0];
 }
 

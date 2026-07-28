@@ -34,6 +34,4 @@ async function createOwnedStartup() {
   return { startup: startup, user: user, token: token };
 }
 
-module.exports = {
-  createOwnedStartup,
-};
+module.exports = createOwnedStartup;

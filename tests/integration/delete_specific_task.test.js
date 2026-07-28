@@ -1,7 +1,7 @@
 const db = require("../../database/db");
 const request = require("supertest");
 const app = require("../../app");
-const createTestStartup = require("../helpers/createTestStartup");
+const createOwnedStartup = require("../helpers/createOwnedStartup");
 const uuid = require("uuid");
 const cleanDatabase = require("../helpers/cleanDatabase");
 const { createTestUser, createAccessToken } = require("../helpers/auth");
@@ -12,7 +12,7 @@ const { createJoinedStartup } = require("../helpers/createdJoinedStartup");
 
 describe("DELETE /startup/:startupid/tasks/:id", () => {
   test("Should delete a task", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
 
     const task = await createMockTaskForStartup(startup.startup.id);
 
@@ -32,7 +32,7 @@ describe("DELETE /startup/:startupid/tasks/:id", () => {
   test("Should fail to get task if startup doesnt exists", async () => {
     const id = uuid.v4();
 
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
     const task = await createMockTaskForStartup(startup.startup.id);
     const token = await createAccessToken(startup.user.id);
 
@@ -48,7 +48,7 @@ describe("DELETE /startup/:startupid/tasks/:id", () => {
   });
 
   test("Should fail to get a task if provided with invalid value for startupid param", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
     const task = await createMockTaskForStartup(startup.startup.id);
     const token = await createAccessToken(startup.user.id);
 
@@ -97,7 +97,7 @@ describe("DELETE /startup/:startupid/tasks/:id", () => {
 
   test("Should fail to delete task if task doesnt exists", async () => {
     const id = uuid.v4();
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
     const token = await createAccessToken(startup.user.id);
 
     const response = await request(app)
@@ -112,7 +112,7 @@ describe("DELETE /startup/:startupid/tasks/:id", () => {
   });
 
   test("Should fail to delete task if provided with invalid value for id param", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
     const token = await createAccessToken(startup.user.id);
 
     const response = await request(app)

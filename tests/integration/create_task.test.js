@@ -2,7 +2,7 @@ const db = require("../../database/db");
 const request = require("supertest");
 const app = require("../../app");
 const cleanDatabase = require("../helpers/cleanDatabase");
-const createTestStartup = require("../helpers/createTestStartup");
+const createOwnedStartup = require("../helpers/createOwnedStartup");
 const expectError = require("../helpers/expectError");
 const uuid = require("uuid");
 const { createTestUser, createAccessToken } = require("../helpers/auth");
@@ -10,7 +10,7 @@ const createStartupWithoutMember = require("../helpers/createStartupWithoutMembe
 const { createJoinedStartup } = require("../helpers/createdJoinedStartup");
 describe("POST /startup/:id/tasks", () => {
   test("Should create new task", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
 
     const response = await request(app)
       .post(`/startup/${startup.startup.id}/tasks`)
@@ -58,7 +58,7 @@ describe("POST /startup/:id/tasks", () => {
   });
 
   test("Should fail to create a task if provided with invalid value for id param", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
 
     const response = await request(app)
       .post(`/startup/invalid/tasks`)
@@ -114,7 +114,7 @@ describe("POST /startup/:id/tasks", () => {
     { case: "title is wrong type", overrides: { title: 21331231 } },
     { case: "title is invalid", overrides: { title: undefined } },
   ])("Should fail to create a new task if $case", async ({ overrides }) => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
     const response = await request(app)
       .post(`/startup/${startup.startup.id}/tasks`)
       .set("Authorization", `Bearer ${startup.token}`)
@@ -132,7 +132,7 @@ describe("POST /startup/:id/tasks", () => {
     { case: "description is wrong type", overrides: { description: 21331231 } },
     { case: "description is invalid", overrides: { description: undefined } },
   ])("Should fail to create a new task if $case", async ({ overrides }) => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
     const response = await request(app)
       .post(`/startup/${startup.startup.id}/tasks`)
       .set("Authorization", `Bearer ${startup.token}`)

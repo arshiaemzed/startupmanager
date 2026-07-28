@@ -3,12 +3,11 @@ const app = require("../../app");
 const request = require("supertest");
 const cleanDatabase = require("../helpers/cleanDatabase");
 const { createTestUser, createAccessToken } = require("../helpers/auth");
-const { createTestStartup } = require("../helpers/startup");
 const createStartupWithoutMember = require("../helpers/createStartupWithoutMember");
 const { createJoinedStartup } = require("../helpers/createdJoinedStartup");
 const uuid = require("uuid");
 const expectError = require("../helpers/expectError");
-const { createOwnedStartup } = require("../helpers/createOwnedStartup");
+const createOwnedStartup = require("../helpers/createOwnedStartup");
 const expectAuth = require("../helpers/expectAuth");
 
 describe("POST /startup/leave/:id", () => {
@@ -25,9 +24,9 @@ describe("POST /startup/leave/:id", () => {
 
     expect(response.body).toHaveProperty("message");
 
-    expect(typeof response.body["message"]).toBe("string");
+    expect(typeof response.body.message).toBe("string");
 
-    expect(response.body["message"]).toBe("leaved the startup successfully");
+    expect(response.body.message).toBe("leaved the startup successfully");
 
     const result = await db.query(
       "SELECT * FROM startup_users WHERE startup_id = $1 AND user_id = $2",

@@ -3,7 +3,7 @@ const app = require("../../app");
 const request = require("supertest");
 const cleanDatabase = require("../helpers/cleanDatabase");
 const { createJoinedStartup } = require("../helpers/createdJoinedStartup");
-const createTestStartup = require("../helpers/createTestStartup");
+const createOwnedStartup = require("../helpers/createOwnedStartup");
 const { createTestUser, createAccessToken } = require("../helpers/auth");
 const createStartupWithoutMember = require("../helpers/createStartupWithoutMember");
 const expectError = require("../helpers/expectError");
@@ -11,15 +11,17 @@ const uuid = require("uuid");
 
 describe("DELETE /startup/:id", () => {
   test("should be able to delete startup", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
 
     const response = await request(app)
       .delete(`/startup/${startup.startup.id}`)
       .set("Authorization", `Bearer ${startup.token}`);
 
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("message");
-    expect(response.body["message"]).toBe("successfully deleted startup");
+    expect(response.status).toBe(204);
+
+    const startups = await db.query(`SELECT * FROM startups`);
+
+    expect(startups.rows).toHaveLength(0);
   });
 
   test("should not be able to delete startup because of permission", async () => {

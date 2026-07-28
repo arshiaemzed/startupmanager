@@ -1,7 +1,7 @@
 const db = require("../../database/db");
 const request = require("supertest");
 const app = require("../../app");
-const createTestStartup = require("../helpers/createTestStartup");
+const createOwnedStartup = require("../helpers/createOwnedStartup");
 const uuid = require("uuid");
 const cleanDatabase = require("../helpers/cleanDatabase");
 const { createTestUser, createAccessToken } = require("../helpers/auth");
@@ -12,7 +12,7 @@ const expectAuth = require("../helpers/expectAuth");
 
 describe("GET /startup/:startupid/tasks/:id", () => {
   test("Should get a task", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
 
     const task = await createMockTaskForStartup(startup.startup.id);
 
@@ -22,21 +22,37 @@ describe("GET /startup/:startupid/tasks/:id", () => {
 
     expect(response.status).toBe(200);
 
-    expect(response.body[0]).toHaveProperty("id");
-    expect(response.body[0]).toHaveProperty("name");
-    expect(response.body[0]).toHaveProperty("description");
-    expect(response.body[0]).toHaveProperty("startup_id");
-    expect(response.body[0]).toHaveProperty("assigned_to");
-    expect(response.body[0]).toHaveProperty("status");
-    expect(response.body[0]).toHaveProperty("created_at");
-    expect(response.body[0]).toHaveProperty("updated_at");
-    expect(response.body[0]).toHaveProperty("task_order");
+    const body = response.body;
+
+    expect(body).toHaveProperty("id");
+    expect(body).toHaveProperty("name");
+    expect(body).toHaveProperty("description");
+    expect(body).toHaveProperty("startup_id");
+    expect(body).toHaveProperty("assigned_to");
+    expect(body).toHaveProperty("status");
+    expect(body).toHaveProperty("created_at");
+    expect(body).toHaveProperty("updated_at");
+
+    expect(typeof body.id).toBe("string");
+    expect(typeof body.name).toBe("string");
+    expect(typeof response.body.description).toBe("string");
+    expect(typeof body.startup_id).toBe("string");
+    expect(typeof body.assigned_to).toBe("object");
+    expect(typeof body.status).toBe("string");
+    expect(typeof body.created_at).toBe("string");
+    expect(typeof body.updated_at).toBe("string");
+
+    expect(body.name).toBe("Test task");
+    expect(body.description).toBe("test task description");
+    expect(body.startup_id).toBe(startup.startup.id);
+    expect(body.assigned_to).toBe(null);
+    expect(body.status).toBe("todo");
   });
 
   test("Should fail to get task if startup doesnt exists", async () => {
     const id = uuid.v4();
 
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
     const task = await createMockTaskForStartup(startup.startup.id);
     const token = await createAccessToken(startup.user.id);
 
@@ -52,7 +68,7 @@ describe("GET /startup/:startupid/tasks/:id", () => {
   });
 
   test("Should fail to get a task if provided with invalid value for startupid param", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
     const task = await createMockTaskForStartup(startup.startup.id);
     const token = await createAccessToken(startup.user.id);
 
@@ -69,7 +85,7 @@ describe("GET /startup/:startupid/tasks/:id", () => {
 
   test("Should fail to get task if task doesnt exists", async () => {
     const id = uuid.v4();
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
     const token = await createAccessToken(startup.user.id);
 
     const response = await request(app)
@@ -84,7 +100,7 @@ describe("GET /startup/:startupid/tasks/:id", () => {
   });
 
   test("Should fail to get task if provided with invalid value for id param", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
     const token = await createAccessToken(startup.user.id);
 
     const response = await request(app)

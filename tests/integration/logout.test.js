@@ -16,9 +16,11 @@ describe("POST /auth/logout", () => {
       .post("/auth/logout")
       .set("Authorization", `Bearer ${refreshToken}`);
 
+    const body = response.body;
+
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("message");
-    expect(response.body.message).toBe(
+    expect(body).toHaveProperty("message");
+    expect(body.message).toBe(
       "Successfully logged out and killed the refresh token",
     );
   });

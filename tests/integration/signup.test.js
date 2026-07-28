@@ -15,12 +15,24 @@ describe("POST /auth/signup", () => {
 
     const response = await request(app).post("/auth/signup").send(newUser);
 
+    const body = response.body;
+
     expect(response.status).toBe(201);
 
-    expect(response.body).toHaveProperty("name");
-    expect(response.body).toHaveProperty("email");
-    expect(response.body).toHaveProperty("password");
-    expect(response.body).toHaveProperty("userName");
+    expect(body).toHaveProperty("name");
+    expect(body).toHaveProperty("email");
+    expect(body).toHaveProperty("password");
+    expect(body).toHaveProperty("userName");
+
+    expect(typeof body.name).toBe("string");
+    expect(typeof body.email).toBe("string");
+    expect(typeof body.userName).toBe("string");
+    expect(typeof body.password).toBe("string");
+
+    expect(body.name).toBe(newUser.name);
+    expect(body.email).toBe(newUser.email);
+    expect(body.userName).toBe(newUser.userName);
+    // the reason that the password value isnt begin checked is because the returned password is hashed
 
     const result = await db.query("SELECT * FROM users WHERE email = $1", [
       newUser.email,

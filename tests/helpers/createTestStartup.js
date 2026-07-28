@@ -4,7 +4,7 @@ const app = require("../../app");
 
 const { createTestUser, createAccessToken } = require("./auth");
 
-async function createTestStartup() {
+async function createOwnedStartup() {
   const user = await createTestUser();
   const token = await createAccessToken(user.id);
 

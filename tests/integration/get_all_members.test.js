@@ -2,7 +2,7 @@ const db = require("../../database/db");
 const request = require("supertest");
 const app = require("../../app");
 const cleanDatabase = require("../helpers/cleanDatabase");
-const createTestStartup = require("../helpers/createTestStartup");
+const createOwnedStartup = require("../helpers/createOwnedStartup");
 const createStartupWithoutMember = require("../helpers/createStartupWithoutMember");
 const { createTestUser, createAccessToken } = require("../helpers/auth");
 const expectError = require("../helpers/expectError");
@@ -10,7 +10,7 @@ const uuid = require("uuid");
 
 describe("GET /startup/:id/members", () => {
   test("Should get all members within a startup", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
 
     const response = await request(app)
       .get(`/startup/${startup.startup.id}/members`)
@@ -28,7 +28,6 @@ describe("GET /startup/:id/members", () => {
     expect(typeof response.body[0].joined_on).toBe("string");
     expect(typeof response.body[0].role).toBe("string");
   });
-
   test("Should not be able to get all members within a startup if not joined in the startup ", async () => {
     const startup = await createStartupWithoutMember();
     const user = await createTestUser();
@@ -47,7 +46,7 @@ describe("GET /startup/:id/members", () => {
 
   test("Should not be able to get all members if the startup doesnt exists", async () => {
     const id = uuid.v4();
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
 
     const response = await request(app)
       .get(`/startup/${id}/members`)
@@ -77,7 +76,7 @@ describe("GET /startup/:id/members", () => {
   });
 
   test("Should not allow user to get all members within a startup if provided with no authorization", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
 
     const response = await request(app).get(
       `/startup/${startup.startup.id}/members`,
@@ -93,7 +92,7 @@ describe("GET /startup/:id/members", () => {
   test("Should not allow a user to get all members withtin a startup if provided with invalid/expired token", async () => {
     const id = uuid.v4();
 
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
 
     const response = await request(app)
       .get(`/startup/${startup.startup.id}/members`)

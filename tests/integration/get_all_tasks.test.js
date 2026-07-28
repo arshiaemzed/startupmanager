@@ -1,7 +1,7 @@
 const db = require("../../database/db");
 const request = require("supertest");
 const app = require("../../app");
-const createTestStartup = require("../helpers/createTestStartup");
+const createOwnedStartup = require("../helpers/createOwnedStartup");
 const uuid = require("uuid");
 const cleanDatabase = require("../helpers/cleanDatabase");
 const { createTestUser, createAccessToken } = require("../helpers/auth");
@@ -11,7 +11,7 @@ const expectAuth = require("../helpers/expectAuth");
 
 describe("GET /startup/:id/tasks", () => {
   test("Should return all startup tasks", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
 
     await db.query(
       "INSERT INTO tasks (name, description, startup_id, assigned_to, status) VALUES ($1, $2, $3, $4, $5)",
@@ -57,7 +57,7 @@ describe("GET /startup/:id/tasks", () => {
   });
 
   test("Should fail to get all tasks within a startup if provided with invalid value for id param", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
 
     const response = await request(app)
       .get(`/startup/invalid/tasks`)

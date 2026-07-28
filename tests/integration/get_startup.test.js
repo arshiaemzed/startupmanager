@@ -7,7 +7,7 @@ const createStartupWithoutMember = require("../helpers/createStartupWithoutMembe
 const { createTestUser, createAccessToken } = require("../helpers/auth");
 const expectError = require("../helpers/expectError");
 const uuid = require("uuid");
-const createTestStartup = require("../helpers/createTestStartup");
+const createOwnedStartup = require("../helpers/createOwnedStartup");
 const expectAuth = require("../helpers/expectAuth");
 
 describe("GET /startup/:id", () => {
@@ -23,6 +23,12 @@ describe("GET /startup/:id", () => {
     expect(response.body).toHaveProperty("startup_id");
     expect(response.body).toHaveProperty("tasks");
     expect(response.body).toHaveProperty("members");
+
+    expect(typeof response.body.startup_id).toBe("string");
+    expect(typeof response.body.tasks).toBe("object");
+    expect(typeof response.body.members).toBe("object");
+
+    expect(response.body.startup_id).toBe(startup.startup.id);
   });
 
   test("Should not allow user to get startup data if not joined", async () => {

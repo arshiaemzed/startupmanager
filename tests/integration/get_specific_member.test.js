@@ -2,7 +2,7 @@ const db = require("../../database/db");
 const request = require("supertest");
 const app = require("../../app");
 const cleanDatabase = require("../helpers/cleanDatabase");
-const createTestStartup = require("../helpers/createTestStartup");
+const createOwnedStartup = require("../helpers/createOwnedStartup");
 const { createTestUser, createAccessToken } = require("../helpers/auth");
 const insertUserIntoStartup = require("../helpers/insertUserIntoStartup");
 const expectError = require("../helpers/expectError");
@@ -11,7 +11,7 @@ const expectAuth = require("../helpers/expectAuth");
 
 describe("GET /startup/:id/members/:memberid", () => {
   test("Should be able to get a specific member info", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
 
     const user = await createTestUser({
       email: "test2account@gmail.com",
@@ -39,10 +39,14 @@ describe("GET /startup/:id/members/:memberid", () => {
     expect(typeof response.body.user_id).toBe("string");
     expect(typeof response.body.role).toBe("string");
     expect(typeof response.body.joined_on).toBe("string");
+
+    expect(response.body.startup_id).toBe(startup.startup.id);
+    expect(response.body.user_id).toBe(user.id);
+    expect(response.body.role).toBe("worker");
   });
 
   test("Should not be able to get a specific member info if not joined in the startup", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
 
     const user = await createTestUser({
       email: "helloasb@gmail.com",
@@ -65,7 +69,7 @@ describe("GET /startup/:id/members/:memberid", () => {
   });
 
   test("Should not be able to get a specific member info if the target user is not joined in the startup", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
 
     const user = await createTestUser({
       email: "helloasb@gmail.com",
@@ -116,7 +120,7 @@ describe("GET /startup/:id/members/:memberid", () => {
   });
 
   test("Should fail if provided with invalid value for id param", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
 
     const user = await createTestUser({
       email: "secondsamira@gmail.com",
@@ -139,7 +143,7 @@ describe("GET /startup/:id/members/:memberid", () => {
   });
 
   test("Should fail if provided with invalid value for memberid param", async () => {
-    const startup = await createTestStartup();
+    const startup = await createOwnedStartup();
 
     const user = await createTestUser({
       email: "secondsamira@gmail.com",

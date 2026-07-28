@@ -13,15 +13,16 @@ describe("POST /startup/join/:id", () => {
   test("should join startup", async () => {
     const startup = await createJoinedStartup();
 
-    expect(startup.response.body).toHaveProperty("message");
+    const body = startup.response.body;
+    const statusCode = startup.response.status;
 
-    expect(typeof startup.response.body["message"]).toBe("string");
+    expect(body).toHaveProperty("message");
 
-    expect(startup.response.body["message"]).toBe(
-      "joined startup successfully",
-    );
+    expect(typeof body.message).toBe("string");
 
-    expect(startup.response.status).toBe(200);
+    expect(body.message).toBe("joined startup successfully");
+
+    expect(statusCode).toBe(200);
   });
 
   test("should not allow the user to join startup that they are already joined in.", async () => {

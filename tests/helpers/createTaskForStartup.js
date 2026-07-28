@@ -6,7 +6,18 @@ async function createMockTaskForStartup(startupId) {
     ["Test task", "test task description", startupId],
   );
 
-  return task.rows[0];
+  const taskData = task.rows[0];
+
+  return {
+    id: taskData.id,
+    name: taskData.name,
+    description: taskData.description,
+    startup_id: taskData.startup_id,
+    assigned_to: taskData.assigned_to,
+    status: taskData.status,
+    created_at: taskData.created_at,
+    updated_at: taskData.updated_at,
+  };
 }
 
 module.exports = createMockTaskForStartup;

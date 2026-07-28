@@ -1,0 +1,3 @@
+ALTER TABLE tasks
+ALTER COLUMN description
+TYPE VARCHAR(255);

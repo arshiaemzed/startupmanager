@@ -66,9 +66,7 @@ async function deleteStartup(startupId, userId) {
     "Only owner's can delete startups.",
   );
 
-  const deletedStartup = await startupRepository.deleteStartup(startupId);
-
-  return deletedStartup;
+  await startupRepository.deleteStartup(startupId);
 }
 module.exports = {
   createNewStartup,
