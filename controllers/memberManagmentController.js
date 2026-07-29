@@ -11,9 +11,15 @@ async function getAllMembers(req, res, next) {
 }
 
 async function searchUsersByNameOrDisplayName(req, res, next) {
-  const limit = Number(req.query.limit) || 20;
-  const page = Number(req.query.page) || 1;
-  const q = req.query.q ?? "";
+  const limit = 20;
+
+  const page = parsePageParam(req.query.page);
+
+  const q = String(req.query.q ?? "").trim();
+
+  if (q.length < 2) {
+    return res.status(200).json([]);
+  }
 
   const offset = (page - 1) * limit;
 
@@ -73,6 +79,16 @@ async function kickMember(req, res, next) {
   );
 
   return res.status(200).json(kickedMember);
+}
+
+function parsePageParam(value) {
+  const n = Number(value);
+
+  if (!Number.isInteger(n) || n < 1) {
+    return 1;
+  }
+
+  return Math.min(n, 10000);
 }
 
 module.exports = {

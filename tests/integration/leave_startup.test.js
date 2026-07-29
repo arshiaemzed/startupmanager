@@ -11,10 +11,8 @@ const createOwnedStartup = require("../helpers/createOwnedStartup");
 const expectAuth = require("../helpers/expectAuth");
 
 describe("POST /startup/leave/:id", () => {
-  test("Should not allow a user to leave startup if joined", async () => {
+  test("Should let a user leave the startup", async () => {
     const startup = await createJoinedStartup();
-
-    expect(startup.response.status).toBe(200);
 
     const response = await request(app)
       .post(`/startup/leave/${startup.startup.id}`)
@@ -27,6 +25,12 @@ describe("POST /startup/leave/:id", () => {
     expect(typeof response.body.message).toBe("string");
 
     expect(response.body.message).toBe("leaved the startup successfully");
+
+    const startups = await db.query("SELECT * FROM startups WHERE id = $1", [
+      startup.startup.id,
+    ]);
+
+    expect(startups.rows).toHaveLength(1);
 
     const result = await db.query(
       "SELECT * FROM startup_users WHERE startup_id = $1 AND user_id = $2",

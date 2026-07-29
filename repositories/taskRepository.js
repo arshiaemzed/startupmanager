@@ -58,15 +58,6 @@ async function deleteSpecificTask(startupId, taskId) {
   return query.rows[0];
 }
 
-async function updateTaskAssignedUser(startupId, taskId, assignedUserId) {
-  const query = await db.query(
-    "UPDATE tasks SET assigned_to = $1 WHERE startup_id = $2 AND id = $3",
-    [assignedUserId, startupId, taskId],
-  );
-
-  return query.rows;
-}
-
 // task status column is using ENUM TYPE
 // 'todo', 'in_progress', 'done'
 async function updateTask(
@@ -100,6 +91,5 @@ module.exports = {
   getSpecificTask,
   doesTaskExists,
   deleteSpecificTask,
-  updateTaskAssignedUser,
   updateTask,
 };

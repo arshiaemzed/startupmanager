@@ -1,13 +1,11 @@
-const validateParam = require("../utils/validateParam");
+const validateUUID = require("../utils/validateUuid");
 
 function inviteUserToStartupMiddleware(req, res, next) {
   const memberId = req.params.id;
-
-  validateParam(memberId, "id param missing (Bad Request)");
-
   const startupId = req.params.startupId;
 
-  validateParam(memberId, "startupid param missing (Bad Request)");
+  validateUUID(memberId, "Invalid input for id param.");
+  validateUUID(startupId, "Invalid input for startupId param.");
 
   next();
 }

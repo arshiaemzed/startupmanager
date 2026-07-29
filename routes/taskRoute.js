@@ -8,7 +8,6 @@ const taskController = require("../controllers/taskController");
 const asyncHandler = require("../middlewares/asyncHandler");
 const getSingleTaskMiddleware = require("../middlewares/getSingleTaskMiddleware");
 const deleteSingleTaskMiddleware = require("../middlewares/deleteSingleTaskMiddleware");
-const updateTaskAssignedUserMiddleware = require("../middlewares/updateTaskAssignedUserMiddleware");
 
 router.post(
   "/startup/:id/tasks",
@@ -36,13 +35,6 @@ router.delete(
   verifyJWT,
   deleteSingleTaskMiddleware,
   asyncHandler(taskController.deleteSingleTask),
-);
-
-router.patch(
-  "/startup/:startupid/tasks/:id/assign",
-  verifyJWT,
-  updateTaskAssignedUserMiddleware,
-  asyncHandler(taskController.updateTaskAssignedUser),
 );
 
 router.patch(

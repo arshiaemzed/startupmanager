@@ -3,6 +3,7 @@ const {
   requireNotBeginJoined,
   requireJoining,
   requirePermission,
+  requireInvite,
 } = require("../guards/serviceGuard");
 
 const startupRepository = require("../repositories/startupRepository");
@@ -21,6 +22,8 @@ async function joinStartup(startupId, userId) {
   await requireStartup(startupId);
 
   await requireNotBeginJoined(startupId, userId);
+
+  await requireInvite(startupId, userId);
 
   const joinedStartup = await startupRepository.joinStartup(startupId, userId);
 

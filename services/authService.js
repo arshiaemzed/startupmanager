@@ -11,11 +11,16 @@ const bcrypt = require("bcrypt");
 const errorCodes = require("../utils/errorCodes");
 
 async function registerUser(email, password, displayName, userName) {
+  const userEmail = email.trim();
+  const userPassword = password.trim();
+  const userDisplayName = displayName.trim();
+  const theUserName = userName.trim();
+
   const SALT_ROUNDS = 10;
 
-  const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+  const hashedPassword = await bcrypt.hash(userPassword, SALT_ROUNDS);
 
-  const userExists = await authRepository.findUser(email);
+  const userExists = await authRepository.findUser(userEmail);
 
   if (userExists) {
     throw new AppError(
@@ -25,7 +30,7 @@ async function registerUser(email, password, displayName, userName) {
     );
   }
 
-  const userNameTaken = await authRepository.isUserNameTaken(userName);
+  const userNameTaken = await authRepository.isUserNameTaken(theUserName);
 
   if (userNameTaken) {
     throw new AppError(
@@ -36,10 +41,10 @@ async function registerUser(email, password, displayName, userName) {
   }
 
   return await authRepository.createNewUser(
-    email,
+    userEmail,
     hashedPassword,
-    displayName,
-    userName,
+    userDisplayName,
+    theUserName,
   );
 }
 
@@ -87,7 +92,7 @@ async function logout(refreshToken) {
   }
 
   try {
-    jwt.verify(refreshToken, "REFRESH_SECRET_1234");
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET);
   } catch (error) {
     throw new AppError(
       401,
@@ -123,7 +128,10 @@ async function refresh(refreshToken) {
   }
 
   try {
-    const userData = jwt.verify(refreshToken, "REFRESH_SECRET_1234");
+    const userData = jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_TOKEN_SECRET,
+    );
     const newAccessToken = generateAccessToken(userData);
 
     return newAccessToken;

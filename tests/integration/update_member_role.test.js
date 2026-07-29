@@ -18,7 +18,7 @@ describe("PATCH /startup/:id/members/:memberid/role", () => {
     });
     const token = await createAccessToken(user.id);
 
-    await insertUserIntoStartup(startup.startup.id, user.id);
+    await insertUserIntoStartup(startup.startup.id, user.id, "worker");
 
     const response = await request(app)
       .patch(`/startup/${startup.startup.id}/members/${user.id}/role`)

@@ -28,7 +28,7 @@ function verifyJWT(req, res, next) {
   }
 
   try {
-    const userData = jwt.verify(token, "SECRET_1234");
+    const userData = jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET);
     req.user = userData;
     return next();
   } catch (error) {

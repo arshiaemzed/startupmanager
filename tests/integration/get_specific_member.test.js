@@ -20,7 +20,7 @@ describe("GET /startup/:id/members/:memberid", () => {
       userName: "test_sami",
     });
 
-    insertUserIntoStartup(startup.startup.id, user.id);
+    await insertUserIntoStartup(startup.startup.id, user.id, "worker");
 
     const response = await request(app)
       .get(`/startup/${startup.startup.id}/members/${user.id}`)
@@ -129,7 +129,7 @@ describe("GET /startup/:id/members/:memberid", () => {
       password: "samira1234",
     });
 
-    await insertUserIntoStartup(startup.startup.id, user.id);
+    await insertUserIntoStartup(startup.startup.id, user.id, "worker");
 
     const response = await request(app)
       .get(`/startup/invalid/members/${user.id}`)
@@ -152,7 +152,7 @@ describe("GET /startup/:id/members/:memberid", () => {
       password: "samira1234",
     });
 
-    await insertUserIntoStartup(startup.startup.id, user.id);
+    await insertUserIntoStartup(startup.startup.id, user.id, "worker");
 
     const response = await request(app)
       .get(`/startup/${startup.startup.id}/members/invalid`)

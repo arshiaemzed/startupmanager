@@ -3,6 +3,7 @@ const taskRepository = require("../repositories/taskRepository");
 const authRepository = require("../repositories/authRepository");
 const AppError = require("../customErrors");
 const errorCodes = require("../utils/errorCodes");
+const inviteRepository = require("../repositories/inviteRepository");
 
 async function requireStartup(startupId) {
   const startup = await startupRepository.doesStartupExists(startupId);
@@ -11,7 +12,7 @@ async function requireStartup(startupId) {
     throw new AppError(
       404,
       errorCodes.STARTUP_DOESNT_EXIST,
-      "Startup does not exists",
+      "Startup does not exists.",
     );
   }
 }
@@ -23,7 +24,7 @@ async function requireTask(startupId, taskId) {
     throw new AppError(
       404,
       errorCodes.TASK_DOESNT_EXIST,
-      "Task does not exists",
+      "Task does not exists.",
     );
   }
 }
@@ -45,7 +46,7 @@ async function requireJoining(startupId, userId) {
     throw new AppError(
       403,
       errorCodes.NOT_JOINED_IN_STARTUP,
-      "You are not joined in the startup",
+      "You are not joined in the startup.",
     );
   }
 }

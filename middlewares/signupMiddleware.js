@@ -1,18 +1,17 @@
 const errorCodes = require("../utils/errorCodes");
 const validateField = require("../utils/validateField");
+const validateBody = require("../utils/validateBody");
 
 function signupMiddleware(req, res, next) {
-  if (!req.body) {
-    return res.status(400).json({
-      success: false,
-      error: {
-        code: errorCodes.INVALID_REQUEST_BODY,
-        message: "Invalid request body.",
-      },
-    });
-  }
+  validateBody(req.body);
 
-  const { email, password, name, userName } = req.body;
+  const name = String(req.body.name);
+
+  const email = String(req.body.email).toLowerCase().trim();
+
+  const password = String(req.body.password).trim();
+
+  const userName = String(req.body.userName).toLowerCase().trim();
 
   validateField(name, "Please enter valid name");
 
@@ -22,31 +21,31 @@ function signupMiddleware(req, res, next) {
 
   validateField(userName, "Please enter a valid and unique username");
 
-  if (name.length < 6) {
+  if (name.length <= 6 || name.length > 25) {
     return res.status(400).json({
       success: false,
       error: {
-        message: "Name length must be more than 6",
+        message: "Name length must be more than 6 and less than 25",
         code: errorCodes.INVALID_NAME_LENGTH,
       },
     });
   }
 
-  if (password.length < 6) {
+  if (password.length <= 6 || password.length > 255) {
     return res.status(400).json({
       success: false,
       error: {
-        message: "Password length must be more than 6",
+        message: "Password length must be more than 6 and less than 255.",
         code: errorCodes.INVALID_PASSWORD_LENGTH,
       },
     });
   }
 
-  if (userName.length < 6) {
+  if (userName.length <= 6 || userName.length > 12) {
     return res.status(400).json({
       success: false,
       error: {
-        message: "Username length must be more than 6",
+        message: "Username length must be more than 6 and less than 12",
         code: errorCodes.INVALID_USERNAME_LENGTH,
       },
     });

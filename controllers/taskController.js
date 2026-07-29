@@ -47,25 +47,6 @@ async function deleteSingleTask(req, res, next) {
   return res.status(204).send();
 }
 
-async function updateTaskAssignedUser(req, res, next) {
-  const taskId = req.params.id;
-
-  const startupId = req.params.startupid;
-
-  const userId = req.user.id;
-
-  const assingedId = req.body.assignedId;
-
-  const updatedTask = await taskService.updateTaskAssignedUser(
-    startupId,
-    taskId,
-    userId,
-    assingedId,
-  );
-
-  return res.status(200).json(updatedTask);
-}
-
 async function updateTask(req, res, next) {
   const startupId = req.params.startupid;
   const taskId = req.params.id;
@@ -91,6 +72,5 @@ module.exports = {
   getAllTasks,
   getSingleTask,
   deleteSingleTask,
-  updateTaskAssignedUser,
   updateTask,
 };

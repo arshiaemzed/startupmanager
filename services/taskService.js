@@ -95,36 +95,6 @@ async function deleteSpecificTask(startupId, taskId, userId) {
   }
 }
 
-async function updateTaskAssignedUser(
-  startupId,
-  taskId,
-  userId,
-  assignedUserId,
-) {
-  await requireStartup(startupId);
-
-  await requireTask(startupId, taskId);
-
-  await requireJoining(startupId, userId);
-
-  await requireJoining(startupId, assignedUserId);
-
-  await requirePermission(
-    startupId,
-    userId,
-    ["owner", "admin"],
-    "Only owner and admin can assign tasks",
-  );
-
-  const updatedTask = await taskRepository.updateTaskAssignedUser(
-    startupId,
-    taskId,
-    assignedUserId,
-  );
-
-  return updatedTask;
-}
-
 async function updateTask(
   startupId,
   taskId,
@@ -137,6 +107,13 @@ async function updateTask(
   await requireStartup(startupId);
 
   await requireJoining(startupId, userId);
+
+  await requirePermission(
+    startupId,
+    userId,
+    ["owner", "admin"],
+    "Only users with admin/owner roles can update a task",
+  );
 
   const updatedTask = await taskRepository.updateTask(
     startupId,
@@ -163,6 +140,5 @@ module.exports = {
   getAllTasks,
   getSingleTask,
   deleteSpecificTask,
-  updateTaskAssignedUser,
   updateTask,
 };

@@ -1,16 +1,16 @@
 const errorCodes = require("../utils/errorCodes");
-const validateParam = require("../utils/validateParam");
+const validateBody = require("../utils/validateBody");
+const validateField = require("../utils/validateField");
 
 function updateMemberRoleMiddleware(req, res, next) {
-  const startupId = req.params.id;
-
-  validateParam(startupId, "id param missing (Bad request)");
+  validateBody(req.body);
 
   const memberId = req.params.memberid;
 
-  validateParam(memberId, "memberid param missing (Bad request)");
-
+  const startupId = req.params.id;
   const newRole = req.body.role;
+
+  validateField(newRole, "role field missing(Bad request)");
 
   if (newRole != "admin" && newRole != "worker") {
     return res.status(400).json({

@@ -26,10 +26,12 @@ async function createJoinedStartup() {
     newStartup.description,
   );
 
-  const response = await request(app)
-    .post(`/startup/join/${startup.id}`)
-    .set("Authorization", `Bearer ${token}`);
-  return { startup: startup, user: user, token: token, response: response };
+  await db.query(
+    "INSERT INTO startup_users (startup_id, user_id, role) VALUES ($1, $2, $3)",
+    [startup.id, user.id, "worker"],
+  );
+
+  return { startup: startup, user: user, token: token };
 }
 
 module.exports = {

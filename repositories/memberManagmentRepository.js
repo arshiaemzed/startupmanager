@@ -8,7 +8,7 @@ async function searchUsersByNameOrDisplayName(value, limit, offset) {
       OR user_name ILIKE $1
       ORDER BY user_name ASC
       LIMIT  $2
-      OFFSET $3;
+      OFFSET $3
     `,
     [`%${value}%`, limit, offset],
   );

@@ -80,15 +80,6 @@ async function deleteStartup(startupId) {
   return { message: "successfully deleted startup" };
 }
 
-async function joinStartup(startupId, userId) {
-  const query = await db.query(
-    "INSERT INTO startup_users (startup_id, user_id) VALUES ($1, $2)",
-    [startupId, userId],
-  );
-
-  return { message: "joined startup successfully" };
-}
-
 async function leaveStartup(startupId, userId) {
   const query = await db.query(
     "DELETE FROM startup_users WHERE startup_id = $1 AND user_id = $2",
@@ -127,7 +118,6 @@ async function getUserRole(startupId, userId) {
 module.exports = {
   createNewStartup,
   deleteStartup,
-  joinStartup,
   leaveStartup,
   isUserInStartup,
   doesStartupExists,

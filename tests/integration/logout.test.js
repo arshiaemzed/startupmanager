@@ -23,6 +23,10 @@ describe("POST /auth/logout", () => {
     expect(body.message).toBe(
       "Successfully logged out and killed the refresh token",
     );
+
+    const query = await db.query("SELECT * FROM user_refresh_tokens");
+
+    expect(query.rows).toHaveLength(0);
   });
 
   test("should not allow user to logout if provided with refresh token that doesnt exist in database", async () => {

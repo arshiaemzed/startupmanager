@@ -1,10 +1,10 @@
-const validateParam = require("../utils/validateParam");
 const validateField = require("../utils/validateField");
+const validateBody = require("../utils/validateBody");
 
 function acceptInviteMiddleware(req, res, next) {
-  const id = req.params.id;
+  validateBody(req.body);
 
-  validateParam(id, "id param missing(Bad request)");
+  const id = req.params.id;
 
   const startupId = req.body.startup_id;
 

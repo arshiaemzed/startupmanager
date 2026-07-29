@@ -12,7 +12,6 @@ async function createNewUser(email, password, displayName, userName) {
   return {
     name: displayName,
     email: email,
-    password: password,
     userName: userName,
   };
 }

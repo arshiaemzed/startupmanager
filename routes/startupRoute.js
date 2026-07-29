@@ -11,13 +11,6 @@ const deleteStartupMiddleware = require("../middlewares/deleteStartupMiddleware"
 router.get("/startups", verifyJWT, startupController.getUserStartups);
 
 router.post(
-  "/startup/join/:id",
-  verifyJWT,
-  membershipMiddleware,
-  asyncHandler(startupController.joinStartup),
-);
-
-router.post(
   "/startup/leave/:id",
   verifyJWT,
   membershipMiddleware,
