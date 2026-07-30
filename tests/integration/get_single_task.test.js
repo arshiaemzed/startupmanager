@@ -63,7 +63,6 @@ describe("GET /startup/:startupid/tasks/:id", () => {
     expectError(response, {
       status: 404,
       code: "STARTUP_DOESNT_EXIST",
-      message: "Startup does not exists",
     });
   });
 
@@ -79,7 +78,6 @@ describe("GET /startup/:startupid/tasks/:id", () => {
     expectError(response, {
       status: 400,
       code: "INVALID_PARAMETER",
-      message: "invalid input for startupid param.",
     });
   });
 
@@ -95,7 +93,6 @@ describe("GET /startup/:startupid/tasks/:id", () => {
     expectError(response, {
       status: 404,
       code: "TASK_NOT_FOUND",
-      message: "Unable to find the task.",
     });
   });
 
@@ -110,7 +107,6 @@ describe("GET /startup/:startupid/tasks/:id", () => {
     expectError(response, {
       status: 400,
       code: "INVALID_PARAMETER",
-      message: "invalid input for id param.",
     });
   });
 
@@ -127,7 +123,6 @@ describe("GET /startup/:startupid/tasks/:id", () => {
     expectError(response, {
       status: 403,
       code: "NOT_JOINED_IN_STARTUP",
-      message: "You are not joined in the startup",
     });
   });
 

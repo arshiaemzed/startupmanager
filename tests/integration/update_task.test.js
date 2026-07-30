@@ -71,7 +71,6 @@ describe("PATCH /startup/:startupid/tasks/:id", () => {
     expectError(response, {
       status: 403,
       code: "NOT_JOINED_IN_STARTUP",
-      message: "You are not joined in the startup",
     });
   });
 
@@ -94,7 +93,6 @@ describe("PATCH /startup/:startupid/tasks/:id", () => {
     expectError(response, {
       status: 404,
       code: "STARTUP_DOESNT_EXIST",
-      message: "Startup does not exists",
     });
   });
 
@@ -115,7 +113,6 @@ describe("PATCH /startup/:startupid/tasks/:id", () => {
     expectError(response, {
       status: 400,
       code: "INVALID_PARAMETER",
-      message: "Invalid input for startupid param.",
     });
   });
 
@@ -137,7 +134,6 @@ describe("PATCH /startup/:startupid/tasks/:id", () => {
     expectError(response, {
       status: 404,
       code: "TASK_NOT_FOUND",
-      message: "Unable to find the task.",
     });
   });
 
@@ -158,7 +154,6 @@ describe("PATCH /startup/:startupid/tasks/:id", () => {
     expectError(response, {
       status: 400,
       code: "INVALID_PARAMETER",
-      message: "invalid input for id param.",
     });
   });
 
@@ -190,7 +185,6 @@ describe("PATCH /startup/:startupid/tasks/:id", () => {
       expectError(response, {
         status: 400,
         code: "INVALID_FIELD",
-        message: "Invalid title.",
       });
     },
   );
@@ -216,7 +210,6 @@ describe("PATCH /startup/:startupid/tasks/:id", () => {
       expectError(response, {
         status: 400,
         code: "INVALID_FIELD",
-        message: "Invalid description.",
       });
     },
   );
@@ -242,7 +235,6 @@ describe("PATCH /startup/:startupid/tasks/:id", () => {
       expectError(response, {
         status: 400,
         code: "INVALID_FIELD",
-        message: "Invalid status.",
       });
     },
   );

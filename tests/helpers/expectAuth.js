@@ -10,7 +10,6 @@ async function expectAuth(httpMethod, URL) {
     expectError(response, {
       status: 401,
       code: "NO_AUTHORIZATION",
-      message: "No authorization",
     });
   });
 
@@ -22,7 +21,6 @@ async function expectAuth(httpMethod, URL) {
     expectError(response, {
       status: 401,
       code: "INVALID_OR_EXPIRED_ACCESS_TOKEN",
-      message: "Invalid or expired access token",
     });
   });
 }

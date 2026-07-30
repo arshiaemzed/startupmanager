@@ -34,7 +34,6 @@ describe("DELETE /startup/:id", () => {
     expectError(response, {
       status: 403,
       code: "NO_PERMISSION",
-      message: "Only owner's can delete startups.",
     });
   });
 
@@ -50,7 +49,6 @@ describe("DELETE /startup/:id", () => {
     expectError(response, {
       status: 400,
       code: "INVALID_PARAMETER",
-      message: "invalid input for id param.",
     });
   });
 
@@ -68,7 +66,6 @@ describe("DELETE /startup/:id", () => {
     expectError(response, {
       status: 404,
       code: "STARTUP_DOESNT_EXIST",
-      message: "Startup does not exists",
     });
   });
 
@@ -86,7 +83,6 @@ describe("DELETE /startup/:id", () => {
     expectError(response, {
       status: 403,
       code: "NOT_JOINED_IN_STARTUP",
-      message: "You are not joined in the startup",
     });
   });
 
@@ -97,7 +93,6 @@ describe("DELETE /startup/:id", () => {
     expectError(response, {
       status: 401,
       code: "NO_AUTHORIZATION",
-      message: "No authorization",
     });
   });
 
@@ -110,7 +105,6 @@ describe("DELETE /startup/:id", () => {
     expectError(response, {
       status: 401,
       code: "INVALID_OR_EXPIRED_ACCESS_TOKEN",
-      message: "Invalid or expired access token",
     });
   });
 

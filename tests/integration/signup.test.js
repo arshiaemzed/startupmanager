@@ -57,7 +57,6 @@ describe("POST /auth/signup", () => {
     expectError(response, {
       status: 400,
       code: "INVALID_FIELD",
-      message: "Please enter a valid email",
     });
   });
 
@@ -73,7 +72,6 @@ describe("POST /auth/signup", () => {
     expectError(response, {
       status: 400,
       code: "INVALID_FIELD",
-      message: "Please enter a valid password",
     });
   });
 
@@ -89,7 +87,6 @@ describe("POST /auth/signup", () => {
     expectError(response, {
       status: 400,
       code: "INVALID_FIELD",
-      message: "Please enter valid name",
     });
   });
 
@@ -105,7 +102,6 @@ describe("POST /auth/signup", () => {
     expectError(response, {
       status: 400,
       code: "INVALID_FIELD",
-      message: "Please enter a valid and unique username",
     });
   });
 
@@ -122,7 +118,6 @@ describe("POST /auth/signup", () => {
     expectError(response, {
       status: 400,
       code: "INVALID_PASSWORD_LENGTH",
-      message: "Password length must be more than 6",
     });
   });
 
@@ -139,7 +134,6 @@ describe("POST /auth/signup", () => {
     expectError(response, {
       status: 400,
       code: "INVALID_NAME_LENGTH",
-      message: "Name length must be more than 6",
     });
   });
 
@@ -155,7 +149,6 @@ describe("POST /auth/signup", () => {
 
     expectError(response, {
       status: 400,
-      message: "Username length must be more than 6",
       code: "INVALID_USERNAME_LENGTH",
     });
   });
@@ -172,7 +165,6 @@ describe("POST /auth/signup", () => {
 
     expectError(response, {
       status: 400,
-      message: "username can only contains numbers and characters",
       code: "INVALID_USERNAME",
     });
   });

@@ -5,13 +5,7 @@ const validateBody = require("../utils/validateBody");
 function signupMiddleware(req, res, next) {
   validateBody(req.body);
 
-  const name = String(req.body.name);
-
-  const email = String(req.body.email).toLowerCase().trim();
-
-  const password = String(req.body.password).trim();
-
-  const userName = String(req.body.userName).toLowerCase().trim();
+  const { name, email, userName, password } = req.body;
 
   validateField(name, "Please enter valid name");
 
@@ -60,6 +54,11 @@ function signupMiddleware(req, res, next) {
       },
     });
   }
+
+  req.body.name = String(req.body.name).trim();
+  req.body.email = String(req.body.email).trim().toLowerCase();
+  req.body.userName = String(req.body.name).trim().toLowerCase();
+  req.body.password = String(req.body.name).trim();
 
   next();
 }

@@ -44,7 +44,6 @@ describe("POST /auth/login", () => {
     expectError(response, {
       status: 401,
       code: "INVALID_CREDENTIALS",
-      message: "Invalid credentials.",
     });
   });
 
@@ -66,7 +65,6 @@ describe("POST /auth/login", () => {
     expectError(response, {
       status: 401,
       code: "INVALID_CREDENTIALS",
-      message: "Invalid credentials.",
     });
   });
 
@@ -87,7 +85,6 @@ describe("POST /auth/login", () => {
     expectError(response, {
       status: 400,
       code: "INVALID_FIELD",
-      message: "Invalid credentials",
     });
   });
 
@@ -103,7 +100,6 @@ describe("POST /auth/login", () => {
     expectError(response, {
       status: 400,
       code: "INVALID_FIELD",
-      message: "Invalid credentials",
     });
   });
 

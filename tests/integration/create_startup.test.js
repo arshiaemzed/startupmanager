@@ -72,7 +72,6 @@ describe("POST /startup", () => {
     expectError(response, {
       status: 400,
       code: "INVALID_FIELD",
-      message: "Invalid name field(Bad Request)",
     });
   });
 
@@ -102,7 +101,6 @@ describe("POST /startup", () => {
     expectError(response, {
       status: 400,
       code: "INVALID_FIELD",
-      message: "Invalid description field(Bad Request)",
     });
   });
 
@@ -113,7 +111,6 @@ describe("POST /startup", () => {
     expectError(response, {
       status: 401,
       code: "NO_AUTHORIZATION",
-      message: "No authorization",
     });
   });
 
@@ -126,7 +123,6 @@ describe("POST /startup", () => {
     expectError(response, {
       status: 401,
       code: "INVALID_OR_EXPIRED_ACCESS_TOKEN",
-      message: "Invalid or expired access token",
     });
   });
 

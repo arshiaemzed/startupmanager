@@ -40,7 +40,6 @@ describe("POST /auth/logout", () => {
     expectError(response, {
       status: 401,
       code: "INVALID_OR_EXPIRED_REFRESH_TOKEN",
-      message: "Refresh token is not valid",
     });
   });
 

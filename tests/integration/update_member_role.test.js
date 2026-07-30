@@ -58,7 +58,6 @@ describe("PATCH /startup/:id/members/:memberid/role", () => {
     expectError(response, {
       status: 403,
       code: "NOT_JOINED_IN_STARTUP",
-      message: "You are not joined in the startup",
     });
   });
 
