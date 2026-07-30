@@ -13,7 +13,7 @@ const errorCodes = require("../utils/errorCodes");
 async function registerUser(email, password, displayName, userName) {
   const userEmail = email.trim();
   const userPassword = password.trim();
-  const userDisplayName = displayName.trim();
+  const userDisplayName = displayName;
   const theUserName = userName.trim();
 
   const SALT_ROUNDS = 10;

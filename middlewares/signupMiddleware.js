@@ -55,7 +55,7 @@ function signupMiddleware(req, res, next) {
     });
   }
 
-  req.body.name = String(req.body.name).trim();
+  req.body.name = String(req.body.name);
   req.body.email = String(req.body.email).trim().toLowerCase();
   req.body.userName = String(req.body.name).trim().toLowerCase();
   req.body.password = String(req.body.name).trim();
