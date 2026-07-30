@@ -78,6 +78,21 @@ async function requireNotBeginJoined(startupId, userId) {
   }
 }
 
+async function requireInvite(startupId, userId) {
+  const isInvited = await inviteRepository.userAlreadyInvited(
+    startupId,
+    userId,
+  );
+
+  if (!isInvited) {
+    throw new AppError(
+      403,
+      errorCodes.YOU_ARE_NOT_INVITED_TO_THE_STARTUP,
+      "You are not invited to the startup.",
+    );
+  }
+}
+
 module.exports = {
   requireStartup,
   requireTask,
@@ -85,4 +100,5 @@ module.exports = {
   requireJoining,
   requireNotBeginJoined,
   requireUserBeginJoined,
+  requireInvite,
 };

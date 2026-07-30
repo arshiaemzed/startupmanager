@@ -3,6 +3,7 @@ const AppError = require("../customErrors");
 const validateUUID = require("../utils/validateUuid");
 const validateField = require("../utils/validateField");
 const validateBody = require("../utils/validateBody");
+const validateOptionalUuid = require("../utils/validateOptionalUuid");
 
 function updateTaskMiddleware(req, res, next) {
   validateBody(req.body);
@@ -17,7 +18,7 @@ function updateTaskMiddleware(req, res, next) {
 
   validateUUID(startupId, "Invalid input for startupid param.");
   validateUUID(taskId, "Invalid input for id param.");
-  validateUUID(assignedTo, "Invalid input for assigned_to field.");
+  validateOptionalUuid(assignedTo, "Invalid input for assigned_to field.");
 
   validateField(title, "Invalid title.");
   validateField(description, "Invalid description.");

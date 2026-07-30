@@ -2,7 +2,6 @@ const authService = require("../services/authService");
 const jwt = require("jsonwebtoken");
 
 const { generateAccessToken } = require("../token_generate");
-const { user } = require("pg/lib/defaults");
 
 async function signup(req, res, next) {
   const { email, password, name, userName } = req.body;

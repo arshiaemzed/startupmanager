@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const db = require("../../database/db");
 const bcrypt = require("bcrypt");
-const { password } = require("pg/lib/defaults");
 
 async function createTestUser(overrides = {}) {
   const newUser = {

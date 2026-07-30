@@ -96,6 +96,5 @@ module.exports = {
   getSpecificMember,
   updateMemberRole,
   kickMember,
-  getSpecificMember,
   searchUsersByNameOrDisplayName,
 };

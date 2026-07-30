@@ -1,4 +1,3 @@
-const { database } = require("pg/lib/defaults");
 const db = require("../database/db");
 
 async function createNewUser(email, password, displayName, userName) {
@@ -48,14 +47,6 @@ async function findUser(email) {
   return query.rows[0];
 }
 
-async function selectAllUsers() {
-  const text = "SELECT email AS user_email FROM users";
-
-  const query = await db.query(text);
-
-  return query.rows;
-}
-
 async function storeRefreshToken(userId, token) {
   const query = await db.query(
     "INSERT INTO user_refresh_tokens (user_id, token, expires_at) VALUES($1, $2, NOW() + INTERVAL '7 days')",
@@ -68,7 +59,6 @@ module.exports = {
   createNewUser,
   isRefreshTokenValid,
   findUser,
-  selectAllUsers,
   storeRefreshToken,
   deleteRefreshToken,
   isUserNameTaken,

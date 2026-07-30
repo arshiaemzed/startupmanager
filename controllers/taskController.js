@@ -1,3 +1,4 @@
+const { requireJoining } = require("../guards/serviceGuard");
 const taskService = require("../services/taskService");
 
 async function createNewTask(req, res, next) {
@@ -21,6 +22,8 @@ async function createNewTask(req, res, next) {
 async function getAllTasks(req, res, next) {
   const startupId = req.params.id;
   const userId = req.user.id;
+
+  requireJoining(startupId, userId);
 
   const tasks = await taskService.getAllTasks(startupId, userId);
 

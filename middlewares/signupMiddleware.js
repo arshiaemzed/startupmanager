@@ -65,6 +65,11 @@ function signupMiddleware(req, res, next) {
 
 function validateUsername(userName) {
   const usernameRegex = /^[a-zA-Z0-9_]+$/;
+
+  if (String(userName).includes(" ")) {
+    return false;
+  }
+
   return usernameRegex.test(userName);
 }
 
