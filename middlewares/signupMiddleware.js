@@ -1,6 +1,7 @@
 const errorCodes = require("../utils/errorCodes");
 const validateField = require("../utils/validateField");
 const validateBody = require("../utils/validateBody");
+const validateEmail = require("../utils/validateEmail");
 
 function signupMiddleware(req, res, next) {
   validateBody(req.body);
@@ -14,6 +15,16 @@ function signupMiddleware(req, res, next) {
   validateField(password, "Please enter a valid password");
 
   validateField(userName, "Please enter a valid and unique username");
+
+  if (!validateEmail(email)) {
+    return res.status(400).json({
+      success: false,
+      error: {
+        message: "Invalid email format.",
+        code: errorCodes.INVALID_EMAIL_FORMAT,
+      },
+    });
+  }
 
   if (name.length <= 6 || name.length > 25) {
     return res.status(400).json({
