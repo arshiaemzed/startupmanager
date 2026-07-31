@@ -1,8 +1,18 @@
 const AppError = require("../customErrors");
 const errorCodes = require("../utils/errorCodes");
 
+const PG_ERRORS = {
+  23505: { status: 409, message: "Resource already exists" },
+  23503: { status: 400, message: "Referenced resource does not exist" },
+  23502: { status: 400, message: "Missing required field" },
+  23514: { status: 400, message: "Value is not allowed" },
+  "22P02": { status: 400, message: "Malformed value in request" },
+  22001: { status: 400, message: "Value is too long" },
+};
 function errorHandler(err, req, res, next) {
   const message = err.message || "Internal server error";
+
+  const pgError = PG_ERRORS[err.code];
 
   if (err instanceof AppError) {
     return res.status(err.statusCode).json({
@@ -14,7 +24,25 @@ function errorHandler(err, req, res, next) {
     });
   }
 
-  console.error(err.message);
+  if (pgError) {
+    return res.status(pgError.status).json({
+      success: false,
+      error: {
+        message: pgError.message,
+        code: errorCodes.PG_ERROR,
+      },
+    });
+  }
+
+  if (err.type === "entity.parse.failed") {
+    return res.status(400).json({
+      success: false,
+      error: {
+        message: "Maloformed json for request body.",
+        code: errorCodes.MALFORMED_JSON_REQUEST_BODY,
+      },
+    });
+  }
 
   return res.status(500).json({
     success: false,

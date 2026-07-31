@@ -4,6 +4,7 @@ const {
   requireJoining,
   requirePermission,
   requireTask,
+  requireUserBeginJoined,
 } = require("../guards/serviceGuard");
 
 const taskRepository = require("../repositories/taskRepository");
@@ -20,6 +21,8 @@ async function createNewTask(
   await requireStartup(startupId);
 
   await requireJoining(startupId, userId);
+
+  await requireUserBeginJoined(startupId, assigned_to);
 
   await requirePermission(
     startupId,
@@ -107,6 +110,8 @@ async function updateTask(
   await requireStartup(startupId);
 
   await requireJoining(startupId, userId);
+
+  await requireUserBeginJoined(startupId, assigned_to);
 
   await requirePermission(
     startupId,
