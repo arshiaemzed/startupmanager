@@ -11,39 +11,47 @@ export const shorthands = undefined;
 export const up = (pgm) => {
   pgm.createType("role_type", ["owner", "admin", "worker"]);
 
-  pgm.createTable("startup_users", {
-    id: {
-      type: "uuid",
-      primaryKey: true,
-      default: pgm.func("gen_random_uuid()"),
-    },
+  pgm.createTable(
+    "startup_users",
+    {
+      id: {
+        type: "uuid",
+        primaryKey: true,
+        default: pgm.func("gen_random_uuid()"),
+      },
 
-    startup_id: {
-      type: "uuid",
-      notNull: true,
-      references: "startups(id)",
-      onDelete: "CASCADE",
-    },
+      startup_id: {
+        type: "uuid",
+        notNull: true,
+        references: "startups(id)",
+        onDelete: "CASCADE",
+      },
 
-    user_id: {
-      type: "uuid",
-      notNull: true,
-      references: "users(id)",
-      onDelete: "CASCADE",
-    },
+      user_id: {
+        type: "uuid",
+        notNull: true,
+        references: "users(id)",
+        onDelete: "CASCADE",
+      },
 
-    role: {
-      type: "role_type",
-      notNull: true,
-      default: "worker",
-    },
+      role: {
+        type: "role_type",
+        notNull: true,
+        default: "worker",
+      },
 
-    joined_on: {
-      type: "timestamptz",
-      notNull: true,
-      default: pgm.func("now()"),
+      joined_on: {
+        type: "timestamptz",
+        notNull: true,
+        default: pgm.func("now()"),
+      },
     },
-  });
+    {
+      constraints: {
+        unique: [["startup_id", "user_id"]],
+      },
+    },
+  );
 };
 
 /**

@@ -88,7 +88,12 @@ async function inviteUserToStartup(startupId, userId, memberId) {
 
   await requireJoining(startupId, userId);
 
-  await requirePermission(startupId, userId, ["owner"]);
+  await requirePermission(
+    startupId,
+    userId,
+    ["owner"],
+    "Only owners can invite users to the startup.",
+  );
 
   const alreadyJoined = await inviteRepository.isUserInStartup(
     startupId,

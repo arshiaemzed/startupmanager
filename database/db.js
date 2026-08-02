@@ -12,7 +12,7 @@ const pool = new Pool({
 });
 
 pool.on("error", (err) => {
-  console.log(`Unexpected Postgresql pool error: ${err}`);
+  console.error(`Unexpected Postgresql pool error: ${err}`);
 });
 
 module.exports = pool;

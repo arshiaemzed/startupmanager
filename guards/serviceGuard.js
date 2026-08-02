@@ -32,11 +32,14 @@ async function requireTask(startupId, taskId) {
 async function requirePermission(startupId, userId, permission, errorMessage) {
   const userRole = await startupRepository.getUserRole(startupId, userId);
 
+  const message =
+    errorMessage || "You dont have permission to perform this action";
+
   if (permission.includes(userRole)) {
     return;
   }
 
-  throw new AppError(403, errorCodes.NO_PERMISSION, errorMessage);
+  throw new AppError(403, errorCodes.NO_PERMISSION, message);
 }
 
 async function requireJoining(startupId, userId) {

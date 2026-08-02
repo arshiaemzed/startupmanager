@@ -22,14 +22,14 @@ async function createNewTask(
 
   await requireJoining(startupId, userId);
 
-  await requireUserBeginJoined(startupId, assigned_to);
-
   await requirePermission(
     startupId,
     userId,
     ["owner", "admin"],
     "Only owner and admin can create new tasks",
   );
+
+  await requireUserBeginJoined(startupId, assigned_to);
 
   const newTask = await taskRepository.createNewTask(
     title,
@@ -111,14 +111,14 @@ async function updateTask(
 
   await requireJoining(startupId, userId);
 
-  await requireUserBeginJoined(startupId, assigned_to);
-
   await requirePermission(
     startupId,
     userId,
     ["owner", "admin"],
     "Only users with admin/owner roles can update a task",
   );
+
+  await requireUserBeginJoined(startupId, assigned_to);
 
   const updatedTask = await taskRepository.updateTask(
     startupId,

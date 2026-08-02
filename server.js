@@ -18,3 +18,18 @@ process.on("SIGTERM", () => {
     await pool.end();
   });
 });
+
+process.on("SIGINT", () => {
+  console.log("SIGINT signal received !");
+
+  server.close(async () => {
+    console.log("Server will not be accepting new connections!");
+    await pool.end();
+  });
+});
+
+process.on("unhandledRejection", (reason) => {
+  console.error(`Unhandled promise rejection: ${reason}`);
+
+  process.exit(1);
+});

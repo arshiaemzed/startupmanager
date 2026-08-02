@@ -10,6 +10,9 @@ const requiredEnv = [
 
 for (const element in requiredEnv) {
   if (!process.env[requiredEnv[element]]) {
+    console.log(
+      `Missing enviroment variable: ${process.env[requiredEnv[element]]}`,
+    );
     process.exit(1);
   }
 }
