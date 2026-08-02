@@ -308,7 +308,7 @@ Authorization: Bearer <access_token>
 | POST   | `/auth/signup`  | Register a new user                     |
 | POST   | `/auth/login`   | Authenticate user and receive tokens    |
 | POST   | `/auth/refresh` | Generate a new access token             |
-| GET    | `/profile`      | Retrieve authenticated user information |
+| GET    | `/auth/profile` | Retrieve authenticated user information |
 | POST   | `/auth/logout`  | Logout and invalidate refresh token     |
 
 ---

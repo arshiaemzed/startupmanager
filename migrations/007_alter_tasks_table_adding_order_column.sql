@@ -1,2 +1,0 @@
-ALTER TABLE tasks 
-    ADD COLUMN task_order SMALLINT NOT NULL DEFAULT -1;

@@ -127,6 +127,4 @@ function hasConsecutiveDots(str) {
   return false;
 }
 
-console.log(validateEmail("emzed@my-site.com"));
-
 module.exports = validateEmail;
