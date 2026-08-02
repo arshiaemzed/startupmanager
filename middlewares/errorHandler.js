@@ -3,7 +3,7 @@ const errorCodes = require("../utils/errorCodes");
 
 const PG_ERRORS = {
   23505: { status: 409, message: "Resource already exists" },
-  23503: { status: 400, message: "Referenced resource does not exist" },
+  23503: { status: 404, message: "Referenced resource does not exist" },
   23502: { status: 400, message: "Missing required field" },
   23514: { status: 400, message: "Value is not allowed" },
   "22P02": { status: 400, message: "Malformed value in request" },
@@ -38,8 +38,18 @@ function errorHandler(err, req, res, next) {
     return res.status(400).json({
       success: false,
       error: {
-        message: "Maloformed json for request body.",
+        message: "Malformed JSON in request body.",
         code: errorCodes.MALFORMED_JSON_REQUEST_BODY,
+      },
+    });
+  }
+
+  if (err.type === "entity.too.large") {
+    return res.status(413).json({
+      success: false,
+      error: {
+        message: "Payload too large.",
+        code: errorCodes.PAYLOAD_TOO_LARGE,
       },
     });
   }
