@@ -52,6 +52,8 @@ export const up = (pgm) => {
       },
     },
   );
+
+  pgm.createIndex("startup_users", ["startup_id", "user_id"]);
 };
 
 /**
