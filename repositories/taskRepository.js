@@ -37,11 +37,8 @@ async function getSpecificTask(taskId) {
   return query.rows[0];
 }
 
-async function doesTaskExists(startupId, taskId) {
-  const query = await db.query(
-    "SELECT * FROM tasks WHERE startup_id = $1 AND id = $2",
-    [startupId, taskId],
-  );
+async function doesTaskExists(taskId) {
+  const query = await db.query("SELECT * FROM tasks WHERE id = $1", [taskId]);
 
   return query.rowCount > 0;
 }

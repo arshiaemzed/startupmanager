@@ -18,7 +18,7 @@ async function requireStartup(startupId) {
 }
 
 async function requireTask(startupId, taskId) {
-  const task = await taskRepository.doesTaskExists(startupId, taskId);
+  const task = await taskRepository.doesTaskExists(taskId);
 
   if (!task) {
     throw new AppError(
