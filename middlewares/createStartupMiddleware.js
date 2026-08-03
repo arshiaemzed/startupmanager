@@ -10,6 +10,15 @@ function createStartupMiddleware(req, res, next) {
 
   validateField(description, "Invalid description field(Bad Request)");
 
+  validateLength(name, 4, 255, "Invalid length for name(MIN: 4, MAX: 255).");
+
+  validateLength(
+    description,
+    4,
+    255,
+    "Invalid length for description(MIN: 4, MAX: 255).",
+  );
+
   next();
 }
 

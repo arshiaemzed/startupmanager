@@ -4,6 +4,7 @@ const validateUUID = require("../utils/validateUuid");
 const validateField = require("../utils/validateField");
 const validateBody = require("../utils/validateBody");
 const validateOptionalUuid = require("../utils/validateOptionalUuid");
+const validateLength = require("../utils/validateLength");
 
 function updateTaskMiddleware(req, res, next) {
   validateBody(req.body);
@@ -23,6 +24,20 @@ function updateTaskMiddleware(req, res, next) {
   validateField(title, "Invalid title.");
   validateField(description, "Invalid description.");
   validateField(status, "Invalid status.");
+
+  validateLength(
+    title,
+    4,
+    255,
+    "Title length should be more than 4 and less than 255 characters",
+  );
+
+  validateLength(
+    description,
+    4,
+    255,
+    "Description length should be more than 4 and less than 255 characters",
+  );
 
   if (
     status &&

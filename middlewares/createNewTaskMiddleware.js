@@ -2,6 +2,7 @@ const AppError = require("../customErrors");
 const errorCodes = require("../utils/errorCodes");
 const validateBody = require("../utils/validateBody");
 const validateField = require("../utils/validateField");
+const validateLength = require("../utils/validateLength");
 const validateOptionalUuid = require("../utils/validateOptionalUuid");
 const validateUUID = require("../utils/validateUuid");
 
@@ -20,6 +21,15 @@ function createNewTaskMiddleware(req, res, next) {
   validateField(title, "title field missing (Bad request)");
 
   validateField(description, "description field missing (Bad request)");
+
+  validateLength(title, 4, 255, "Invalid length for title(MIN: 4, MAX: 255).");
+
+  validateLength(
+    description,
+    4,
+    255,
+    "Invalid length for description(MIN: 4, MAX: 255).",
+  );
 
   if (
     status &&
