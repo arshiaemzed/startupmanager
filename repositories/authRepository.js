@@ -3,16 +3,12 @@ const db = require("../database/db");
 async function createNewUser(email, password, displayName, userName) {
   const query = await db.query(
     `
-        INSERT INTO users(email, password, name, user_name) VALUES ($1, $2, $3, $4);    
+        INSERT INTO users(email, password, name, user_name) VALUES ($1, $2, $3, $4) RETURNING *;    
     `,
     [email, password, displayName, userName],
   );
 
-  return {
-    name: displayName,
-    email: email,
-    userName: userName,
-  };
+  return query.rows[0];
 }
 
 async function isUserNameTaken(userName) {
@@ -48,11 +44,10 @@ async function findUser(email) {
 }
 
 async function storeRefreshToken(userId, token) {
-  const query = await db.query(
+  await db.query(
     "INSERT INTO user_refresh_tokens (user_id, token, expires_at) VALUES($1, $2, NOW() + INTERVAL '7 days')",
     [userId, token],
   );
-  return { message: "User token stored successfully" };
 }
 
 module.exports = {

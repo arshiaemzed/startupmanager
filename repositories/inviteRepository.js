@@ -52,7 +52,7 @@ async function acceptInvite(inviteId, startupId, userId) {
 
 async function declineInvite(inviteId, startupId, userId) {
   const query = await db.query(
-    "DELETE FROM invites WHERE id = $1 AND startup_id = $2 AND user_id = $3",
+    "DELETE FROM invites WHERE id = $1 AND startup_id = $2 AND user_id = $3 RETURNING*;",
     [inviteId, startupId, userId],
   );
 
@@ -94,7 +94,8 @@ async function inviteUserToStartup(startupId, userId, memberId) {
     `
       INSERT INTO invites 
       (startup_id, invited_by, user_id)
-      VALUES ($1, $2, $3);
+      VALUES ($1, $2, $3)
+      RETURNING*;
     `,
     [startupId, userId, memberId],
   );

@@ -112,5 +112,4 @@ module.exports = {
   updateUserRole,
   kickMember,
   searchUsersByNameOrDisplayName,
-  inviteUserToStartup,
 };

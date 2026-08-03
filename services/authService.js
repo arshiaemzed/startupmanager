@@ -40,12 +40,18 @@ async function registerUser(email, password, displayName, userName) {
     );
   }
 
-  return await authRepository.createNewUser(
+  const newUser = await authRepository.createNewUser(
     userEmail,
     hashedPassword,
     userDisplayName,
     theUserName,
   );
+
+  return {
+    name: newUser.name,
+    userName: newUser.user_name,
+    email: newUser.email,
+  };
 }
 
 async function login(email, password) {

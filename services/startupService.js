@@ -18,18 +18,6 @@ async function createNewStartup(name, description, userId) {
   return startup;
 }
 
-async function joinStartup(startupId, userId) {
-  await requireStartup(startupId);
-
-  await requireNotBeginJoined(startupId, userId);
-
-  await requireInvite(startupId, userId);
-
-  const joinedStartup = await startupRepository.joinStartup(startupId, userId);
-
-  return joinedStartup;
-}
-
 async function leaveStartup(startupId, userId) {
   await requireStartup(startupId);
 
@@ -38,7 +26,9 @@ async function leaveStartup(startupId, userId) {
   const userRole = await startupRepository.getUserRole(startupId, userId);
 
   if (userRole === "owner") {
-    return await startupRepository.deleteStartup(startupId);
+    const deletedStartup = await startupRepository.deleteStartup(startupId);
+
+    return deletedStartup;
   }
 
   const leavedStartup = await startupRepository.leaveStartup(startupId, userId);
@@ -74,7 +64,6 @@ async function deleteStartup(startupId, userId) {
 module.exports = {
   createNewStartup,
   deleteStartup,
-  joinStartup,
   leaveStartup,
   getUserStartups,
   getStartup,

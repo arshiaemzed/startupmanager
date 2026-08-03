@@ -16,6 +16,7 @@ async function createNewStartup(name, description, userId) {
     );
 
     await client.query("COMMIT;");
+
     return {
       id: startupQuery.rows[0].id,
       owner: userId,
@@ -73,20 +74,21 @@ async function getUserStartups(userId) {
 }
 
 async function deleteStartup(startupId) {
-  const query = await db.query("DELETE FROM startups WHERE id = $1", [
-    startupId,
-  ]);
+  const query = await db.query(
+    "DELETE FROM startups WHERE id = $1 RETURNING *;",
+    [startupId],
+  );
 
-  return { message: "successfully deleted startup" };
+  return query.rows[0];
 }
 
 async function leaveStartup(startupId, userId) {
   const query = await db.query(
-    "DELETE FROM startup_users WHERE startup_id = $1 AND user_id = $2",
+    "DELETE FROM startup_users WHERE startup_id = $1 AND user_id = $2 RETURNING *;",
     [startupId, userId],
   );
 
-  return { message: "leaved the startup successfully" };
+  return query.rows[0];
 }
 
 async function isUserInStartup(startupId, userId) {
