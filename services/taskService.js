@@ -57,7 +57,7 @@ async function getSingleTask(startupId, taskId, userId) {
 
   await requireJoining(startupId, userId);
 
-  const task = await taskRepository.getSpecificTask(startupId, taskId);
+  const task = await taskRepository.getSpecificTask(taskId);
 
   if (!task) {
     throw new AppError(

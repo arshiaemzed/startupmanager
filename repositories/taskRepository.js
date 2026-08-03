@@ -31,11 +31,8 @@ async function getAllTasks(startupId) {
   return query.rows;
 }
 
-async function getSpecificTask(startupId, taskId) {
-  const query = await db.query(
-    "SELECT * FROM tasks WHERE startup_id = $1 AND id = $2;",
-    [startupId, taskId],
-  );
+async function getSpecificTask(taskId) {
+  const query = await db.query("SELECT * FROM tasks WHERE id = $1;", [taskId]);
 
   return query.rows[0];
 }
