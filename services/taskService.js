@@ -118,7 +118,7 @@ async function updateTask(
     "Only users with admin/owner roles can update a task",
   );
 
-  await requireUserBeginJoined(startupId, assigned_to);
+  await requireUserBeginJoined(startupId, assignedTo);
 
   const updatedTask = await taskRepository.updateTask(
     startupId,

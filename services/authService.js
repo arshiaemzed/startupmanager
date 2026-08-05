@@ -93,7 +93,7 @@ async function logout(refreshToken) {
     throw new AppError(
       401,
       errorCodes.INVALID_OR_EXPIRED_REFRESH_TOKEN,
-      "Refresh token is not valid",
+      "Invalid or expired refresh token.",
     );
   }
 
@@ -103,7 +103,7 @@ async function logout(refreshToken) {
     throw new AppError(
       401,
       errorCodes.INVALID_OR_EXPIRED_REFRESH_TOKEN,
-      "Invalid or expired refresh token",
+      "Invalid or expired refresh token.",
     );
   }
 
@@ -114,7 +114,7 @@ async function logout(refreshToken) {
     throw new AppError(
       401,
       errorCodes.FAILED_TO_DELETE_REFRESH_TOKEN,
-      "Failed to delete refresh token",
+      "Failed to delete refresh token.",
     );
   }
 
@@ -127,7 +127,7 @@ async function refresh(refreshToken) {
 
   if (!validRefreshToken) {
     throw new AppError(
-      400,
+      401,
       errorCodes.INVALID_OR_EXPIRED_REFRESH_TOKEN,
       "Invalid refresh token.",
     );
