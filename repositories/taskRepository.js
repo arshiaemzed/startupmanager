@@ -24,9 +24,16 @@ async function createNewTask(
 }
 
 async function getAllTasks(startupId) {
-  const query = await db.query("SELECT * FROM tasks WHERE startup_id = $1", [
-    startupId,
-  ]);
+  const query = await db.query(
+    `
+    SELECT * 
+    FROM tasks
+    WHERE 
+    startup_id = $1
+    ORDER BY updated_at DESC;
+     `,
+    [startupId],
+  );
 
   return query.rows;
 }
@@ -68,7 +75,8 @@ async function updateTask(
       name = COALESCE($1, name),
       description = COALESCE($2, description),
       status = COALESCE($3, status),
-      assigned_to = COALESCE($6, assigned_to)
+      assigned_to = COALESCE($6, assigned_to),
+      updated_at = NOW()
     WHERE 
       startup_id = $4 AND id = $5
     RETURNING *;

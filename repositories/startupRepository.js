@@ -44,13 +44,21 @@ async function getStartup(startupId) {
     FROM startup_users su
     INNER JOIN users u
     ON u.id = su.user_id
-    WHERE su.startup_id = $1;
+    WHERE su.startup_id = $1
+    ORDER BY 
+      CASE su.role
+        WHEN 'owner' then 1
+        WHEN 'admin' then 2
+        WHEN 'worker' then 3
+        ELSE 4
+      END,
+      u.name ASC;
     `,
     [startupId],
   );
 
   const taskResult = await db.query(
-    "SELECT * FROM tasks WHERE startup_id = $1;",
+    "SELECT * FROM tasks WHERE startup_id = $1 ORDER BY updated_at DESC;",
     [startupId],
   );
 
@@ -64,8 +72,17 @@ async function getStartup(startupId) {
 async function getUserStartups(userId) {
   const query = await db.query(
     `
-      SELECT * FROM startups
+      SELECT 
+      startups.name,
+      startups.description,
+      startups.created_at,
+      startup_users.startup_id,
+      startup_users.user_id,
+      startup_users.role,
+      startup_users.joined_on
+      FROM startups
       JOIN startup_users ON startups.id = startup_users.startup_id AND startup_users.user_id = $1
+      ORDER BY startups.created_at DESC
     `,
     [userId],
   );
@@ -93,7 +110,7 @@ async function leaveStartup(startupId, userId) {
 
 async function isUserInStartup(startupId, userId) {
   const query = await db.query(
-    "SELECT FROM startup_users WHERE startup_id = $1 AND user_id = $2",
+    "SELECT * FROM startup_users WHERE startup_id = $1 AND user_id = $2",
     [startupId, userId],
   );
 

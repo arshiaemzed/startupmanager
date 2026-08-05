@@ -18,7 +18,19 @@ async function searchUsersByNameOrDisplayName(value, limit, offset) {
 
 async function getAllMembers(startupId) {
   const query = await db.query(
-    "SELECT * FROM startup_users WHERE startup_id = $1",
+    `
+    SELECT * 
+    FROM startup_users 
+    WHERE 
+    startup_id = $1
+    ORDER BY 
+      CASE role
+        WHEN 'owner' then 1
+        WHEN 'admin' then 2
+        WHEN 'worker then 3
+        ELSE 4
+      END;
+    `,
     [startupId],
   );
 

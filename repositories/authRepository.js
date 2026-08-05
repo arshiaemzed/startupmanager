@@ -20,12 +20,36 @@ async function isUserNameTaken(userName) {
 }
 
 async function isRefreshTokenValid(token) {
-  const found = await db.query(
-    "SELECT * FROM user_refresh_tokens WHERE token = $1",
-    [token],
-  );
+  const client = await db.connect();
 
-  return found.rowCount > 0;
+  try {
+    await client.query("BEGIN;");
+
+    const refreshToken = await client.query(
+      "SELECT * FROM user_refresh_tokens WHERE token = $1",
+      [token],
+    );
+
+    const expiresAt = new Date(refreshToken.rows[0].expires_at);
+
+    const now = Date.now();
+
+    if (expiresAt < now) {
+      await client.query("DELETE FROM user_refresh_tokens WHERE token = $1", [
+        token,
+      ]);
+
+      await client.query("COMMIT;");
+
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    await client.query("ROLLBACK;");
+  } finally {
+    await client.release();
+  }
 }
 
 async function deleteRefreshToken(token) {
@@ -45,7 +69,7 @@ async function findUser(email) {
 
 async function storeRefreshToken(userId, token) {
   await db.query(
-    "INSERT INTO user_refresh_tokens (user_id, token, expires_at) VALUES($1, $2, NOW() + INTERVAL '7 days')",
+    "INSERT INTO user_refresh_tokens (user_id, token, expires_at) VALUES($1, $2, NOW() + INTERVAL '7d')",
     [userId, token],
   );
 }

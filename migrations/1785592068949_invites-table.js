@@ -46,6 +46,12 @@ export const up = (pgm) => {
         onDelete: "CASCADE",
       },
 
+      invited_at: {
+        type: "timestamptz",
+        notNull: true,
+        default: pgm.func("NOW()"),
+      },
+
       status: {
         type: "invite_status",
         notNull: true,

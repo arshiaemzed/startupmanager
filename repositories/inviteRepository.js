@@ -17,7 +17,8 @@ async function getUserInvites(userId) {
         ON startups.id = invites.startup_id
     JOIN users
         ON users.id = invites.invited_by
-    WHERE invites.user_id = $1;
+    WHERE invites.user_id = $1
+    ORDER BY startups.name ASC;
     `,
     [userId],
   );
