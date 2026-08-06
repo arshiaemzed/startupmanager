@@ -20,9 +20,9 @@ async function login(req, res, next) {
 async function refreshJWT(req, res, next) {
   const refreshToken = req.headers.authorization.split(" ")[1];
 
-  const newAccessToken = await authService.refresh(refreshToken);
+  const data = await authService.refresh(refreshToken);
 
-  return res.status(200).json({ access_token: newAccessToken });
+  return res.status(200).json(data);
 }
 
 function getProfile(req, res, next) {

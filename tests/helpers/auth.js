@@ -48,7 +48,7 @@ async function createRefreshToken(user) {
   );
 
   await db.query(
-    "INSERT INTO user_refresh_tokens (user_id, token, expires_at) VALUES($1, $2, NOW() + INTERVAL '7 days')",
+    "INSERT INTO user_refresh_tokens (user_id, jti, expires_at) VALUES($1, $2, NOW() + INTERVAL '7 days')",
     [user.id, token],
   );
 

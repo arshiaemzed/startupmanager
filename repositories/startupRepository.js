@@ -23,9 +23,10 @@ async function createNewStartup(name, description, userId) {
       title: name,
       description: description,
     };
-  } catch (error) {
+  } catch (err) {
     await client.query("ROLLBACK;");
-    throw error;
+
+    throw err;
   } finally {
     client.release();
   }

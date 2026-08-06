@@ -10,14 +10,18 @@ function generateAccessToken(user) {
 }
 
 function genereateRefreshToken(user) {
-  return jwt.sign(
-    { id: user.id, email: user.email, jti: uuid.v4() },
+  const jti = uuid.v4();
+
+  const refreshToken = jwt.sign(
+    { id: user.id, email: user.email, jti: jti },
 
     process.env.JWT_REFRESH_TOKEN_SECRET,
     {
       expiresIn: "7d",
     },
   );
+
+  return { jti: jti, refreshToken: refreshToken };
 }
 
 module.exports = {

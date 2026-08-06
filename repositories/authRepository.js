@@ -1,4 +1,6 @@
+const AppError = require("../customErrors");
 const db = require("../database/db");
+const errorCodes = require("../utils/errorCodes");
 
 async function createNewUser(email, password, displayName, userName) {
   const query = await db.query(
@@ -19,46 +21,55 @@ async function isUserNameTaken(userName) {
   return query.rowCount > 0;
 }
 
-async function isRefreshTokenValid(token) {
+async function isRefreshTokenValid(jti) {
+  const query = await db.query(
+    "SELECT id FROM user_refresh_tokens WHERE jti = $1 AND expires_at > NOW();",
+    [jti],
+  );
+
+  return query.rowCount > 0;
+}
+
+async function rotateRefreshToken(userId, oldJTI, newJTI) {
   const client = await db.connect();
 
   try {
     await client.query("BEGIN;");
 
-    const refreshToken = await client.query(
-      "SELECT * FROM user_refresh_tokens WHERE token = $1",
-      [token],
+    const deletedToken = await client.query(
+      "DELETE FROM user_refresh_tokens WHERE user_id = $1 AND jti = $2 RETURNING *;",
+      [userId, oldJTI],
     );
 
-    const expiresAt = new Date(refreshToken.rows[0].expires_at);
-
-    const now = Date.now();
-
-    if (expiresAt < now) {
-      await client.query("DELETE FROM user_refresh_tokens WHERE token = $1", [
-        token,
-      ]);
-
-      await client.query("COMMIT;");
-
-      return false;
+    if (deletedToken.rowCount !== 1) {
+      throw new AppError(
+        500,
+        errorCodes.FAILED_TO_DELETE_REFRESH_TOKEN,
+        "Failed to delete the refresh token.",
+      );
     }
 
-    return true;
-  } catch (error) {
+    await client.query(
+      "INSERT INTO user_refresh_tokens(user_id, jti, expires_at) VALUES($1, $2, NOW() + INTERVAL '7d');",
+      [userId, newJTI],
+    );
+
+    await client.query("COMMIT;");
+  } catch (err) {
     await client.query("ROLLBACK;");
+    throw err;
   } finally {
     await client.release();
   }
 }
 
-async function deleteRefreshToken(token) {
-  const found = await db.query(
-    "DELETE FROM user_refresh_tokens WHERE  token = $1",
-    [token],
+async function deleteRefreshToken(jti) {
+  const query = await db.query(
+    "DELETE FROM user_refresh_tokens WHERE jti = $1 RETURNING *;",
+    [jti],
   );
 
-  return found.rowCount > 0;
+  return query.rows[0];
 }
 
 async function findUser(email) {
@@ -67,10 +78,10 @@ async function findUser(email) {
   return query.rows[0];
 }
 
-async function storeRefreshToken(userId, token) {
+async function storeRefreshToken(userId, jti) {
   await db.query(
-    "INSERT INTO user_refresh_tokens (user_id, token, expires_at) VALUES($1, $2, NOW() + INTERVAL '7d')",
-    [userId, token],
+    "INSERT INTO user_refresh_tokens(user_id, jti, expires_at) VALUES($1, $2, NOW() + INTERVAL '7d')",
+    [userId, jti],
   );
 }
 
@@ -79,6 +90,7 @@ module.exports = {
   isRefreshTokenValid,
   findUser,
   storeRefreshToken,
+  rotateRefreshToken,
   deleteRefreshToken,
   isUserNameTaken,
 };

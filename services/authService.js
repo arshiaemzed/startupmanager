@@ -78,69 +78,66 @@ async function login(email, password) {
   const accessToken = generateAccessToken(user);
   const refreshToken = genereateRefreshToken(user);
 
-  await authRepository.storeRefreshToken(user.id, refreshToken);
+  await authRepository.storeRefreshToken(user.id, refreshToken.jti);
 
   return {
     access_token: accessToken,
-    refresh_token: refreshToken,
+    refresh_token: refreshToken.refreshToken,
   };
 }
 
 async function logout(refreshToken) {
-  const exists = await authRepository.isRefreshTokenValid(refreshToken);
+  const user = jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET);
 
-  if (!exists) {
+  const valid = await authRepository.isRefreshTokenValid(user.jti);
+
+  if (!valid) {
     throw new AppError(
       401,
       errorCodes.INVALID_OR_EXPIRED_REFRESH_TOKEN,
-      "Invalid or expired refresh token.",
+      "didnt found the damn token in the database alright ?",
     );
   }
 
-  try {
-    jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET);
-  } catch (error) {
-    throw new AppError(
-      401,
-      errorCodes.INVALID_OR_EXPIRED_REFRESH_TOKEN,
-      "Invalid or expired refresh token.",
-    );
-  }
+  const deletedToken = await authRepository.deleteRefreshToken(user.jti);
 
-  const deletedRefreshToken =
-    await authRepository.deleteRefreshToken(refreshToken);
-
-  if (!deletedRefreshToken) {
-    throw new AppError(
-      401,
-      errorCodes.FAILED_TO_DELETE_REFRESH_TOKEN,
-      "Failed to delete refresh token.",
-    );
-  }
-
-  return { message: "Successfully logged out and killed the refresh token" };
+  return deletedToken;
 }
 
 async function refresh(refreshToken) {
-  const validRefreshToken =
-    await authRepository.isRefreshTokenValid(refreshToken);
-
-  if (!validRefreshToken) {
-    throw new AppError(
-      401,
-      errorCodes.INVALID_OR_EXPIRED_REFRESH_TOKEN,
-      "Invalid refresh token.",
-    );
-  }
-
   try {
-    const userData = jwt.verify(
+    const refreshTokenData = jwt.verify(
       refreshToken,
       process.env.JWT_REFRESH_TOKEN_SECRET,
     );
-    const newAccessToken = generateAccessToken(userData);
 
-    return newAccessToken;
+    const oldJTI = refreshTokenData.jti;
+
+    const isRefreshTokenValid =
+      await authRepository.isRefreshTokenValid(oldJTI);
+
+    if (!isRefreshTokenValid) {
+      throw new AppError(
+        401,
+        errorCodes.INVALID_OR_EXPIRED_REFRESH_TOKEN,
+        "Invalid or exipred refresh token.",
+      );
+    }
+
+    const newRefreshToken = genereateRefreshToken(refreshTokenData);
+    const newAccessToken = generateAccessToken(refreshTokenData);
+    const newJTI = newRefreshToken.jti;
+
+    await authRepository.rotateRefreshToken(
+      refreshTokenData.id,
+      oldJTI,
+      newJTI,
+    );
+
+    return {
+      access_token: newAccessToken,
+      refresh_token: newRefreshToken.refreshToken,
+    };
   } catch (error) {
     throw new AppError(
       401,

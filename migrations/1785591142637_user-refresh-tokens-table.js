@@ -22,8 +22,8 @@ export const up = (pgm) => {
       onDelete: "CASCADE",
     },
 
-    token: {
-      type: "text",
+    jti: {
+      type: "uuid",
       notNull: true,
       unique: true,
     },

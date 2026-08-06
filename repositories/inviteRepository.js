@@ -1,4 +1,6 @@
+const AppError = require("../customErrors");
 const db = require("../database/db");
+const errorCodes = require("../utils/errorCodes");
 
 async function getUserInvites(userId) {
   const query = await db.query(
@@ -43,9 +45,9 @@ async function acceptInvite(inviteId, startupId, userId) {
     );
 
     await client.query("COMMIT;");
-  } catch (error) {
+  } catch (err) {
     await client.query("ROLLBACK;");
-    throw error;
+    throw err;
   } finally {
     await client.release();
   }
