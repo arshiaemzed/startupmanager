@@ -50,11 +50,19 @@ async function getSpecificMember(startupId, userId) {
 
 async function updateUserRole(startupId, userId, role) {
   const query = await db.query(
-    "UPDATE startup_users SET role = $1 WHERE startup_id = $2 AND user_id = $3 RETURNING user_id, startup_id, role",
+    `
+      UPDATE startup_users su 
+      SET role = $1 
+      FROM users u
+      WHERE startup_id = $2 
+      AND u.id = su.user_id
+      AND user_id = $3
+      RETURNING su.id, u.name AS name, su.startup_id, su.user_id, su.role, su.joined_on;
+    `,
     [role, startupId, userId],
   );
 
-  return query.rows;
+  return query.rows[0];
 }
 
 async function kickMember(startupId, userId) {

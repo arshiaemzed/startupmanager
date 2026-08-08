@@ -29,7 +29,9 @@ async function createNewTask(
     "Only owner and admin can create new tasks",
   );
 
-  await requireUserBeginJoined(startupId, assigned_to);
+  if (assigned_to) {
+    await requireUserBeginJoined(startupId, assigned_to);
+  }
 
   const newTask = await taskRepository.createNewTask(
     title,
@@ -96,6 +98,8 @@ async function deleteSpecificTask(startupId, taskId, userId) {
       "Unable to find the task.",
     );
   }
+
+  return deletedTask;
 }
 
 async function updateTask(

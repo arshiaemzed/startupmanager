@@ -45,9 +45,14 @@ async function deleteSingleTask(req, res, next) {
   const taskId = req.params.id;
   const userId = req.user.id;
 
-  await taskService.deleteSpecificTask(startupId, taskId, userId);
+  const deletedTask = await taskService.deleteSpecificTask(
+    startupId,
+    taskId,
+    userId,
+  );
 
-  return res.status(204).send();
+  // used 200 instead of 204 because we need to use deleted task data
+  return res.status(200).send(deletedTask);
 }
 
 async function updateTask(req, res, next) {

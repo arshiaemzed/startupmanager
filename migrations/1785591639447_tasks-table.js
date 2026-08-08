@@ -37,7 +37,6 @@ export const up = (pgm) => {
 
     assigned_to: {
       type: "uuid",
-      notNull: true,
       references: "users(id)",
       onDelete: "CASCADE",
     },
