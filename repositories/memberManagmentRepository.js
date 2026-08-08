@@ -27,7 +27,7 @@ async function getAllMembers(startupId) {
       CASE role
         WHEN 'owner' then 1
         WHEN 'admin' then 2
-        WHEN 'worker then 3
+        WHEN 'worker' then 3
         ELSE 4
       END;
     `,
@@ -91,10 +91,51 @@ async function kickMember(startupId, userId) {
   return query.rows[0];
 }
 
+async function transferOwnership(startupId, userId, targetId) {
+  const client = await db.connect();
+  try {
+    await client.query("BEGIN;");
+
+    await client.query(
+      `
+      UPDATE startup_users 
+      SET role = 'worker'
+      WHERE
+      startup_id = $1 
+      AND
+      user_id = $2;
+      `,
+      [startupId, userId],
+    );
+
+    const newOwner = await client.query(
+      ` 
+      UPDATE startup_users 
+      SET role = 'owner'
+      WHERE
+      startup_id = $1
+      AND
+      user_id = $2
+      RETURNING *;
+      `,
+      [startupId, targetId],
+    );
+
+    await client.query("COMMIT;");
+    return newOwner.rows[0];
+  } catch (err) {
+    await client.query("ROLLBACK;");
+    throw err;
+  } finally {
+    await client.release();
+  }
+}
+
 module.exports = {
   getAllMembers,
   getSpecificMember,
   updateUserRole,
   kickMember,
   searchUsersByNameOrDisplayName,
+  transferOwnership,
 };

@@ -1,3 +1,4 @@
+const AppError = require("../customErrors");
 const {
   requireStartup,
   requireNotBeginJoined,
@@ -7,6 +8,7 @@ const {
 } = require("../guards/serviceGuard");
 
 const startupRepository = require("../repositories/startupRepository");
+const errorCodes = require("../utils/errorCodes");
 
 async function createNewStartup(name, description, userId) {
   const startup = await startupRepository.createNewStartup(
@@ -26,9 +28,11 @@ async function leaveStartup(startupId, userId) {
   const userRole = await startupRepository.getUserRole(startupId, userId);
 
   if (userRole === "owner") {
-    const deletedStartup = await startupRepository.deleteStartup(startupId);
-
-    return deletedStartup;
+    throw new AppError(
+      401,
+      errorCodes.NEED_TO_TRASNFER_OWNERSHIP_BEFORE_LEAVE,
+      "You need to transfer ownership before leaving startup",
+    );
   }
 
   const leavedStartup = await startupRepository.leaveStartup(startupId, userId);

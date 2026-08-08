@@ -1,6 +1,6 @@
 const memberManagmentService = require("../services/memberManagmentService");
 
-async function getAllMembers(req, res, next) {
+async function getAllMembers(req, res) {
   const startupId = req.params.id;
 
   const userId = req.user.id;
@@ -10,7 +10,23 @@ async function getAllMembers(req, res, next) {
   return res.status(200).json(members);
 }
 
-async function searchUsersByNameOrDisplayName(req, res, next) {
+async function transferOwnerShip(req, res) {
+  const startupId = req.params.id;
+
+  const userId = req.user.id;
+
+  const targetId = req.params.memberid;
+
+  const newOwner = await memberManagmentService.transferOwnership(
+    startupId,
+    userId,
+    targetId,
+  );
+
+  res.status(200).json(newOwner);
+}
+
+async function searchUsersByNameOrDisplayName(req, res) {
   const limit = 20;
 
   const page = parsePageParam(req.query.page);
@@ -32,7 +48,7 @@ async function searchUsersByNameOrDisplayName(req, res, next) {
   return res.status(200).json(users);
 }
 
-async function getSpecificMember(req, res, next) {
+async function getSpecificMember(req, res) {
   const userId = req.user.id;
 
   const memberId = req.params.memberid;
@@ -48,7 +64,7 @@ async function getSpecificMember(req, res, next) {
   return res.status(200).json(member);
 }
 
-async function updateMemberRole(req, res, next) {
+async function updateMemberRole(req, res) {
   const startupId = req.params.id;
 
   const memberId = req.params.memberid;
@@ -67,7 +83,7 @@ async function updateMemberRole(req, res, next) {
   return res.status(200).json(updatedUser);
 }
 
-async function kickMember(req, res, next) {
+async function kickMember(req, res) {
   const userId = req.user.id;
   const startupId = req.params.id;
   const affectedUserId = req.params.memberid;
@@ -97,4 +113,5 @@ module.exports = {
   updateMemberRole,
   kickMember,
   searchUsersByNameOrDisplayName,
+  transferOwnerShip,
 };

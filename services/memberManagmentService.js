@@ -76,6 +76,29 @@ async function updateUserRole(startupId, userId, affectedUserId, role) {
   return updatedUser;
 }
 
+async function transferOwnership(startupId, userId, targetId) {
+  await requireStartup(startupId);
+
+  await requireJoining(startupId, userId);
+
+  await requirePermission(
+    startupId,
+    userId,
+    ["owner"],
+    "You need to be an owner in order to be able to transfer ownership.",
+  );
+
+  await requireUserBeginJoined(startupId, targetId);
+
+  const newOwner = await memberManagmentRepository.transferOwnership(
+    startupId,
+    userId,
+    targetId,
+  );
+
+  return newOwner;
+}
+
 async function kickMember(startupId, userId, affectedUserId) {
   await requireStartup(startupId, userId);
 
@@ -112,4 +135,5 @@ module.exports = {
   updateUserRole,
   kickMember,
   searchUsersByNameOrDisplayName,
+  transferOwnership,
 };

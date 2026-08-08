@@ -6,6 +6,7 @@ const memberManagmentController = require("../controllers/memberManagmentControl
 const updateMemberRoleMiddleware = require("../middlewares/updateMemberRoleMiddleware");
 const kickMemberMiddleware = require("../middlewares/kickMemberMiddleware");
 const getSpecificMemberMiddleware = require("../middlewares/getSpecificMemberMiddleware");
+const transferOwnershipMiddleware = require("../middlewares/transferOwnershipMiddleware");
 
 const router = express.Router();
 
@@ -41,6 +42,13 @@ router.delete(
   verifyJWT,
   kickMemberMiddleware,
   asyncHandler(memberManagmentController.kickMember),
+);
+
+router.post(
+  "/startup/:id/members/:memberid/transfer",
+  verifyJWT,
+  transferOwnershipMiddleware,
+  asyncHandler(memberManagmentController.transferOwnerShip),
 );
 
 module.exports = router;
